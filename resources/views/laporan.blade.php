@@ -184,7 +184,7 @@
             <div id="penjualanPrintTarget" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-gray-100">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">Struk Penjualan</h3>
+                        <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">KIOS PUTRA TUNGGAL</h3>
                         <div class="flex items-center space-x-2">
                             <button type="button" onclick="printReceipt('penjualan')" class="text-indigo-600 hover:text-indigo-900 focus:outline-none flex items-center gap-1 text-sm font-medium print:hidden">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
