@@ -38,12 +38,12 @@
             </div>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-            <div class="bg-red-50 p-3 rounded-lg">
-                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" /></svg>
+            <div class="bg-amber-50 p-3 rounded-lg">
+                <svg class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H3V10.5z" /></svg>
             </div>
             <div>
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pembelian</p>
-                <p id="statTotalPurchases" class="text-2xl font-bold text-gray-900">Rp 0</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">HPP (Modal Terjual)</p>
+                <p id="statTotalHpp" class="text-2xl font-bold text-gray-900">Rp 0</p>
             </div>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
@@ -52,16 +52,16 @@
             </div>
             <div>
                 <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Keuntungan Bersih</p>
-                <p id="statTotalProfit" class="text-2xl font-bold text-gray-900">Rp 0</p>
+                <p id="statTotalProfit" class="text-2xl font-bold text-green-600">Rp 0</p>
             </div>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
-            <div class="bg-orange-50 p-3 rounded-lg">
-                <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+            <div class="bg-red-50 p-3 rounded-lg">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" /></svg>
             </div>
             <div>
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Barang Terjual</p>
-                <p id="statTotalQty" class="text-2xl font-bold text-gray-900">0 Unit</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Pengeluaran Supplier</p>
+                <p id="statTotalPembelian" class="text-2xl font-bold text-gray-900">Rp 0</p>
             </div>
         </div>
     </div>
@@ -145,7 +145,6 @@
                 <div class="bg-white px-4 py-5 sm:p-6 text-sm">
                     <!-- Header Info -->
                     <div class="mb-4 text-gray-600">
-                        <p><strong>ID:</strong> P-<span id="detailId"></span></p>
                         <p><strong>Tanggal:</strong> <span id="detailTanggal"></span></p>
                         <p><strong>Admin:</strong> <span id="detailAdmin"></span></p>
                         <p><strong>Supplier:</strong> <span id="detailSupplier"></span></p>
@@ -184,7 +183,7 @@
             <div id="penjualanPrintTarget" class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-gray-100">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">KIOS PUTRA TUNGGAL</h3>
+                        <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</h3>
                         <div class="flex items-center space-x-2">
                             <button type="button" onclick="printReceipt('penjualan')" class="text-indigo-600 hover:text-indigo-900 focus:outline-none flex items-center gap-1 text-sm font-medium print:hidden">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -201,7 +200,6 @@
                 <div class="bg-white px-4 py-5 sm:p-6 text-sm">
                     <!-- Header Info -->
                     <div class="mb-4 text-gray-600">
-                        <p><strong>ID:</strong> T-<span id="detailPenjualanId"></span></p>
                         <p><strong>Tanggal:</strong> <span id="detailPenjualanTanggal"></span></p>
                         <p><strong>Kasir:</strong> <span id="detailPenjualanKasir"></span></p>
                     </div>
@@ -358,16 +356,16 @@
             <p id="printTotalSales" class="text-xl font-bold text-gray-900"></p>
         </div>
         <div class="print-stat-card">
-            <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Total Modal</p>
-            <p id="printTotalPurchases" class="text-xl font-bold text-gray-900"></p>
+            <p class="text-xs uppercase text-gray-500 font-semibold mb-1">HPP (Modal Terjual)</p>
+            <p id="printTotalHpp" class="text-xl font-bold text-gray-900"></p>
         </div>
         <div class="print-stat-card">
             <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Keuntungan Bersih</p>
             <p id="printTotalProfit" class="text-xl font-bold text-green-600"></p>
         </div>
         <div class="print-stat-card">
-            <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Barang Terjual</p>
-            <p id="printTotalQty" class="text-xl font-bold text-gray-900"></p>
+            <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Pengeluaran Supplier</p>
+            <p id="printTotalPembelian" class="text-xl font-bold text-gray-900"></p>
         </div>
     </div>
     
@@ -428,7 +426,6 @@
     function printReceipt(type) {
         let html = '';
         if (type === 'penjualan') {
-            const id = document.getElementById('detailPenjualanId').innerText;
             const tanggal = document.getElementById('detailPenjualanTanggal').innerText;
             const kasir = document.getElementById('detailPenjualanKasir').innerText;
             const total = document.getElementById('detailPenjualanTotal').innerText;
@@ -454,7 +451,7 @@
                 <h3>POS SYSTEM</h3><p>Struk Penjualan</p>
             </div>
             <div class="struk-info">
-                <p>ID: T-${id}</p><p>Tanggal: ${tanggal}</p><p>Kasir: ${kasir}</p>
+                <p>Tanggal: ${tanggal}</p><p>Kasir: ${kasir}</p>
             </div>
             <div class="struk-divider">--------------------------------</div>
             <div class="struk-items">${itemsHtml}</div>
@@ -468,7 +465,6 @@
             <div class="struk-footer text-center">Terima Kasih</div>
             `;
         } else if (type === 'pembelian') {
-            const id = document.getElementById('detailId').innerText;
             const tanggal = document.getElementById('detailTanggal').innerText;
             const admin = document.getElementById('detailAdmin').innerText;
             const supplier = document.getElementById('detailSupplier').innerText;
@@ -493,7 +489,7 @@
                 <h3>POS SYSTEM</h3><p>Bukti Restock/Pembelian</p>
             </div>
             <div class="struk-info">
-                <p>ID: P-${id}</p><p>Tanggal: ${tanggal}</p>
+                <p>Tanggal: ${tanggal}</p>
                 <p>Admin: ${admin}</p><p>Supplier: ${supplier}</p>
             </div>
             <div class="struk-divider">--------------------------------</div>
@@ -574,7 +570,7 @@
             lastHistoryPembelian = historyPembelianData;
             lastHistoryPenjualan = historyPenjualanData;
 
-            updateStats(historyPenjualanData, historyPembelianData, itemsData);
+            updateStats(chartData, itemsData);
             renderCombinedChart(chartData);
             renderHistoryTable(historyPembelianData);
             renderHistoryPenjualanTable(historyPenjualanData);
@@ -584,21 +580,27 @@
         }
     }
 
-    function updateStats(penjualan, pembelian, items) {
+    function updateStats(chartData, items) {
         let totalSales = 0;
+        let totalHpp = 0;
         let totalPurchases = 0;
         let totalQty = 0;
         
-        penjualan.forEach(t => totalSales += Number(t.total_harga));
-        pembelian.forEach(p => totalPurchases += Number(p.total_harga));
+        if (chartData && chartData.length > 0) {
+            chartData.forEach(t => {
+                totalSales += Number(t.total_penjualan || 0);
+                totalHpp += Number(t.total_hpp || 0);
+                totalPurchases += Number(t.total_pembelian || 0);
+            });
+        }
         items.forEach(i => totalQty += Number(i.total_qty));
-        
-        let totalProfit = totalSales - totalPurchases;
+
+        let totalProfit = totalSales - totalHpp;
 
         document.getElementById('statTotalSales').innerText = 'Rp ' + totalSales.toLocaleString('id-ID');
-        document.getElementById('statTotalPurchases').innerText = 'Rp ' + totalPurchases.toLocaleString('id-ID');
+        document.getElementById('statTotalHpp').innerText = 'Rp ' + totalHpp.toLocaleString('id-ID');
         document.getElementById('statTotalProfit').innerText = 'Rp ' + totalProfit.toLocaleString('id-ID');
-        document.getElementById('statTotalQty').innerText = totalQty.toLocaleString('id-ID') + ' Unit';
+        document.getElementById('statTotalPembelian').innerText = 'Rp ' + totalPurchases.toLocaleString('id-ID');
     }
 
     function renderCombinedChart(data) {
@@ -692,7 +694,7 @@
         }
         data.slice(0, 10).forEach(row => {
             const dateStr = new Date(row.created_at).toLocaleString('id-ID', { 
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
             });
             tbody.innerHTML += `
                 <tr class="hover:bg-gray-50 transition-colors">
@@ -715,9 +717,8 @@
             const data = await response.json();
 
             const tx = data.transaksi;
-            document.getElementById('detailId').innerText = String(tx.id).padStart(4, '0');
             document.getElementById('detailTanggal').innerText = new Date(tx.created_at).toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
             });
             document.getElementById('detailAdmin').innerText = tx.admin_name || '-';
             document.getElementById('detailSupplier').innerText = tx.nama_supplier || '-';
@@ -757,7 +758,7 @@
         }
         data.slice(0, 10).forEach(row => {
             const dateStr = new Date(row.created_at).toLocaleString('id-ID', { 
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
             });
             tbody.innerHTML += `
                 <tr class="hover:bg-gray-50 transition-colors">
@@ -779,9 +780,8 @@
             const data = await response.json();
 
             const tx = data.transaksi;
-            document.getElementById('detailPenjualanId').innerText = String(tx.id).padStart(4, '0');
             document.getElementById('detailPenjualanTanggal').innerText = new Date(tx.created_at).toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
             });
             document.getElementById('detailPenjualanKasir').innerText = tx.kasir_name || '-';
             
@@ -823,9 +823,9 @@
         document.getElementById('printDate').innerText = `Dicetak pada: ${new Date().toLocaleString('id-ID')}`;
 
         document.getElementById('printTotalSales').innerText = document.getElementById('statTotalSales').innerText;
-        document.getElementById('printTotalPurchases').innerText = document.getElementById('statTotalPurchases').innerText;
+        document.getElementById('printTotalHpp').innerText = document.getElementById('statTotalHpp').innerText;
         document.getElementById('printTotalProfit').innerText = document.getElementById('statTotalProfit').innerText;
-        document.getElementById('printTotalQty').innerText = document.getElementById('statTotalQty').innerText;
+        document.getElementById('printTotalPembelian').innerText = document.getElementById('statTotalPembelian').innerText;
 
         const tbodyPenjualan = document.getElementById('printPenjualanTableBody');
         tbodyPenjualan.innerHTML = '';
@@ -834,7 +834,7 @@
         } else {
             lastHistoryPenjualan.forEach(row => {
                 const dateStr = new Date(row.created_at).toLocaleString('id-ID', { 
-                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
                 });
                 tbodyPenjualan.innerHTML += `
                     <tr>
@@ -853,7 +853,7 @@
         } else {
             lastHistoryPembelian.forEach(row => {
                 const dateStr = new Date(row.created_at).toLocaleString('id-ID', { 
-                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar'
                 });
                 tbodyPembelian.innerHTML += `
                     <tr>

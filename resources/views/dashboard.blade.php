@@ -10,7 +10,7 @@
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <!-- Card 1: Today Sales -->
+        <!-- Card 1: Total Penjualan Hari Ini -->
         <div class="card-hover bg-white overflow-hidden rounded-2xl shadow-soft border border-gray-100 relative">
             <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full"></div>
             <div class="p-6">
@@ -23,34 +23,34 @@
                     <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full">Hari Ini</span>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1">Penjualan Hari Ini</p>
-                    <h3 class="text-2xl font-bold text-gray-900" id="todaySales">Rp 0</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Total Penjualan</p>
+                    <h3 class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalPenjualan, 0, ',', '.') }}</h3>
                 </div>
             </div>
             <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-1"></div>
         </div>
 
-        <!-- Card 2: Today Purchases -->
+        <!-- Card 2: HPP / Modal Terjual -->
         <div class="card-hover bg-white overflow-hidden rounded-2xl shadow-soft border border-gray-100 relative">
-            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-red-500/10 to-transparent rounded-bl-full"></div>
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-500/10 to-transparent rounded-bl-full"></div>
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
                         <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H3V10.5z" />
                         </svg>
                     </div>
-                    <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">Hari Ini</span>
+                    <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-full">Hari Ini</span>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1">Pembelian Hari Ini</p>
-                    <h3 class="text-2xl font-bold text-gray-900" id="todayPurchases">Rp 0</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-1">HPP (Modal Terjual)</p>
+                    <h3 class="text-2xl font-bold text-gray-900">Rp {{ number_format($totalModalTerjual, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="bg-gradient-to-r from-red-500 to-red-600 h-1"></div>
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 h-1"></div>
         </div>
 
-        <!-- Card 3: Today Profit -->
+        <!-- Card 3: Keuntungan Bersih -->
         <div class="card-hover bg-white overflow-hidden rounded-2xl shadow-soft border border-gray-100 relative">
             <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500/10 to-transparent rounded-bl-full"></div>
             <div class="p-6">
@@ -63,31 +63,31 @@
                     <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">Hari Ini</span>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1">Keuntungan Hari Ini</p>
-                    <h3 class="text-2xl font-bold text-green-600" id="todayProfit">Rp 0</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Keuntungan Bersih</p>
+                    <h3 class="text-2xl font-bold text-green-600">Rp {{ number_format($keuntunganBersih, 0, ',', '.') }}</h3>
                 </div>
             </div>
             <div class="bg-gradient-to-r from-green-500 to-green-600 h-1"></div>
         </div>
 
-        <!-- Card 4: Total Tx -->
+        <!-- Card 4: Pengeluaran Supplier -->
         <div class="card-hover bg-white overflow-hidden rounded-2xl shadow-soft border border-gray-100 relative">
-            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-full"></div>
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-red-500/10 to-transparent rounded-bl-full"></div>
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shadow-lg shadow-red-500/30">
                         <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125-1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                         </svg>
                     </div>
-                    <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-2 py-1 rounded-full">Total</span>
+                    <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">Hari Ini</span>
                 </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-500 mb-1">Total Transaksi</p>
-                    <h3 class="text-2xl font-bold text-gray-900" id="todayTx">0</h3>
+                    <p class="text-sm font-medium text-gray-500 mb-1">Pengeluaran Supplier</p>
+                    <h3 class="text-2xl font-bold text-gray-900">Rp {{ number_format($pengeluaranSupplier, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-1"></div>
+            <div class="bg-gradient-to-r from-red-500 to-red-600 h-1"></div>
         </div>
     </div>
 
@@ -139,6 +139,16 @@
             <!-- Items will be rendered here -->
         </div>
     </div>
+
+    @if(auth()->check() && auth()->user()->role === 'admin')
+    <!-- Profil Toko Button -->
+    <div class="mt-8">
+        <a href="{{ route('profil.index') }}" class="inline-flex items-center space-x-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span>Pengaturan Profil Toko</span>
+        </a>
+    </div>
+    @endif
 </div>
 
 <script>
@@ -147,17 +157,14 @@
     async function fetchDashboardData() {
         try {
             const today = new Date().toLocaleDateString('en-CA');
-            const [resHarian, resBarang, resPerJam] = await Promise.all([
-                fetch(`/api/laporan/harian?startDate=${today}&endDate=${today}`),
+            const [resBarang, resPerJam] = await Promise.all([
                 fetch(`/api/laporan/barang?startDate=${today}&endDate=${today}`),
                 fetch(`/api/laporan/perjam?date=${today}`)
             ]);
 
-            const dataHarian = await resHarian.json();
             const dataBarang = await resBarang.json();
             const dataPerJam = await resPerJam.json();
 
-            updateStatsCards(dataHarian);
             renderChart(dataPerJam);
             renderTopItems(dataBarang);
             renderTopItemsChart(dataBarang);
@@ -165,22 +172,6 @@
         } catch(e) {
             console.error("Dashboard fetch error:", e);
         }
-    }
-
-    function updateStatsCards(data) {
-        if(!data || data.length === 0) {
-            document.getElementById('todaySales').innerText = 'Rp 0';
-            document.getElementById('todayPurchases').innerText = 'Rp 0';
-            document.getElementById('todayProfit').innerText = 'Rp 0';
-            document.getElementById('todayTx').innerText = '0';
-            return;
-        }
-
-        const todayData = data[0];
-        document.getElementById('todaySales').innerText = 'Rp ' + Number(todayData.total_penjualan).toLocaleString('id-ID');
-        document.getElementById('todayPurchases').innerText = 'Rp ' + Number(todayData.total_pembelian).toLocaleString('id-ID');
-        document.getElementById('todayProfit').innerText = 'Rp ' + Number(todayData.keuntungan).toLocaleString('id-ID');
-        document.getElementById('todayTx').innerText = todayData.total_transaksi || '0';
     }
 
     function renderChart(data) {

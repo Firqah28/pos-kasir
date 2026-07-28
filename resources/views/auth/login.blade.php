@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - KIOS PUTRA TUNGGAL</title>
+    <title>Login - {{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</title>
+    @if(!empty($globalSettings['store_logo']))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $globalSettings['store_logo']) }}">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
@@ -75,7 +78,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
                     </svg>
                 </div>
-                <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">KIOS PUTRA TUNGGAL</h1>
+                <h1 class="text-4xl font-extrabold text-white tracking-tight mb-2">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</h1>
                 <p class="text-blue-100 text-sm font-medium">Point of Sale System</p>
             </div>
 
@@ -155,7 +158,7 @@
 
                 <div class="mt-8 pt-6 border-t border-gray-200">
                     <p class="text-center text-xs text-gray-500">
-                        &copy; {{ date('Y') }} <strong class="text-purple-600">KIOS PUTRA TUNGGAL</strong>. All rights reserved.
+                        &copy; {{ date('Y') }} <strong class="text-purple-600">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</strong>. All rights reserved.
                     </p>
                 </div>
             </div>

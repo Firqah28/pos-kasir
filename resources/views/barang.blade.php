@@ -12,6 +12,12 @@
             <div class="mt-4 sm:mt-0 flex items-center space-x-3">
                 <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-xl border border-gray-200 shadow-sm">
                     <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                    <input type="text" id="searchBarang" oninput="applyFilter()" placeholder="Cari barang..." class="block border-0 py-1 text-gray-900 focus:ring-0 sm:text-sm text-xs bg-transparent w-40 placeholder-gray-400">
+                </div>
+                <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-xl border border-gray-200 shadow-sm">
+                    <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
                     </svg>
                     <span class="text-xs text-gray-500 font-medium">Filter:</span>
@@ -243,13 +249,24 @@
 
     function applyFilter() {
         const selectedKategori = document.getElementById('filterKategori').value;
+        const searchQuery = (document.getElementById('searchBarang').value || '').toLowerCase().trim();
         let filteredData = allBarang;
 
         if (selectedKategori && selectedKategori !== "") {
-            filteredData = allBarang.filter(b => {
+            filteredData = filteredData.filter(b => {
                 if (b.kategori_id === null || b.kategori_id === undefined) return false;
                 return String(b.kategori_id) === String(selectedKategori);
             });
+        }
+
+        if (searchQuery) {
+            filteredData = filteredData.filter(b =>
+                (b.nama_barang || '').toLowerCase().includes(searchQuery) ||
+                (b.barcode || '').toLowerCase().includes(searchQuery) ||
+                (b.kategori?.nama_kategori || b.nama_kategori || '').toLowerCase().includes(searchQuery) ||
+                (b.supplier?.nama_supplier || b.nama_supplier || '').toLowerCase().includes(searchQuery) ||
+                (b.satuan || '').toLowerCase().includes(searchQuery)
+            );
         }
 
         renderBarangTable(filteredData);
@@ -276,31 +293,31 @@
         }
     }
 
-    function openModal() {
+    async function openModal() {
         document.getElementById('barangModal').classList.remove('hidden');
         document.getElementById('barangForm').reset();
         document.getElementById('barang_id').value = '';
-        fetchOptions('/api/kategori', 'kategori_id');
-        fetchOptions('/api/supplier', 'supplier_id');
+        await Promise.all([
+            fetchOptions('/api/kategori', 'kategori_id'),
+            fetchOptions('/api/supplier', 'supplier_id')
+        ]);
     }
 
     function closeModal() {
         document.getElementById('barangModal').classList.add('hidden');
     }
 
-    function editBarang(b) {
-        openModal();
-        setTimeout(() => {
-            document.getElementById('barang_id').value = b.id;
-            document.getElementById('barcode').value = b.barcode || '';
-            document.getElementById('nama_barang').value = b.nama_barang;
-            document.getElementById('kategori_id').value = b.kategori_id || '';
-            document.getElementById('supplier_id').value = b.supplier_id || '';
-            document.getElementById('harga_beli').value = b.harga_beli;
-            document.getElementById('harga_jual').value = b.harga_jual;
-            document.getElementById('stok').value = b.stok;
-            document.getElementById('satuan').value = b.satuan || '';
-        }, 100);
+    async function editBarang(b) {
+        await openModal();
+        document.getElementById('barang_id').value = b.id;
+        document.getElementById('barcode').value = b.barcode || '';
+        document.getElementById('nama_barang').value = b.nama_barang;
+        document.getElementById('kategori_id').value = b.kategori_id || '';
+        document.getElementById('supplier_id').value = b.supplier_id || '';
+        document.getElementById('harga_beli').value = b.harga_beli;
+        document.getElementById('harga_jual').value = b.harga_jual;
+        document.getElementById('stok').value = b.stok;
+        document.getElementById('satuan').value = b.satuan || '';
     }
 
     function deleteBarang(id) {

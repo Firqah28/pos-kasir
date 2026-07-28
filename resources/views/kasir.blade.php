@@ -67,78 +67,109 @@
         </div>
 
         <!-- Right Column: Cart & Payment -->
-        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 flex flex-col h-auto lg:h-[calc(100vh-12rem)] sticky top-6">
-            <!-- Cart Header -->
-            <div class="p-5 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-bold text-gray-900">Keranjang</h2>
-                            <p class="text-xs text-gray-500" id="cartItemCount">0 item</p>
-                        </div>
-                    </div>
-                    <button onclick="clearCart()" class="text-xs text-red-500 hover:text-red-700 font-medium hover:bg-red-50 px-3 py-2 rounded-lg transition-colors">
-                        Hapus Semua
-                    </button>
-                </div>
-            </div>
-
-            <!-- Cart Items -->
-            <div id="cartItems" class="flex-1 overflow-y-auto p-5 space-y-3">
-                <!-- Items will be rendered here -->
-            </div>
-
-            <!-- Empty Cart State -->
-            <div id="emptyCartState" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                    <svg class="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                </div>
-                <p class="text-gray-500 text-sm font-medium">Keranjang belanja kosong</p>
-                <p class="text-gray-400 text-xs mt-1">Pilih produk untuk memulai transaksi</p>
-            </div>
-
-            <!-- Payment Section -->
-            <div class="p-5 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white rounded-b-2xl">
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center pb-4 border-b border-gray-100">
-                        <span class="text-base font-bold text-gray-900">Total Tagihan</span>
-                        <span id="cartTotal" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Rp 0</span>
-                    </div>
-
-                    <div>
-                        <label for="bayar" class="block text-sm font-semibold text-gray-700 mb-2">Uang Diterima</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="text-gray-500 font-bold">Rp</span>
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-soft border border-gray-100 flex flex-col lg:sticky lg:top-6" style="max-height: calc(100vh - 7rem);">
+                <!-- Cart Header -->
+                <div class="shrink-0 p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                                </svg>
                             </div>
-                            <input type="number" id="bayar" 
-                                class="block w-full pl-12 pr-4 py-3 rounded-xl border-0 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-lg font-semibold input-modern" 
-                                placeholder="0" required>
+                            <div>
+                                <h2 class="text-lg font-bold text-gray-900">Keranjang</h2>
+                                <p class="text-xs text-gray-500" id="cartItemCount">0 item</p>
+                            </div>
                         </div>
+                        <button onclick="clearCart()" class="text-xs text-red-500 hover:text-red-700 font-medium hover:bg-red-50 px-3 py-2 rounded-lg transition-colors">
+                            Hapus Semua
+                        </button>
                     </div>
+                </div>
 
-                    <div class="flex justify-between items-center p-4 rounded-xl bg-green-50 border border-green-200">
-                        <span class="text-sm font-semibold text-gray-700">Kembalian</span>
-                        <span id="kembalian" class="text-xl font-bold text-green-600">Rp 0</span>
+                <!-- Cart Items -->
+                <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
+                    <!-- Items will be rendered here -->
+                </div>
+
+                <!-- Empty Cart State -->
+                <div id="emptyCartState" class="flex-1 flex flex-col items-center justify-center p-6 text-center min-h-0">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                        <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
                     </div>
+                    <p class="text-gray-500 text-sm font-medium">Keranjang kosong</p>
+                    <p class="text-gray-400 text-xs mt-1">Pilih produk untuk memulai transaksi</p>
+                </div>
 
-                    <button type="button" onclick="showPaymentConfirmation()" id="btnBayar" 
-                        class="w-full rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-4 py-4 text-base font-bold text-white shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all btn-ripple" 
-                        disabled>
-                        <div class="flex items-center justify-center space-x-2">
-                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H3V10.5z" />
-                            </svg>
-                            <span>Proses Pembayaran</span>
+                <!-- Payment Section -->
+                <div class="shrink-0 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white rounded-b-2xl">
+                    <div class="p-4 space-y-3">
+                        <!-- Total -->
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                            <span class="text-sm font-bold text-gray-900">Total Tagihan</span>
+                            <span id="cartTotal" class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Rp 0</span>
                         </div>
-                    </button>
+
+                        <!-- Payment Method -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" onclick="selectPaymentMethod('tunai')" id="btnTunai"
+                                class="payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-blue-500 bg-blue-50 text-blue-700 transition-all">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H3V10.5z" /></svg>
+                                <span>Tunai</span>
+                            </button>
+                            <button type="button" onclick="selectPaymentMethod('qris')" id="btnQris"
+                                class="payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300 transition-all">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" /></svg>
+                                <span>QRIS</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="metodeBayar" value="tunai">
+
+                        <!-- Bayar Input (Tunai) -->
+                        <div id="bayarSection">
+                            <label for="bayar" class="block text-xs font-semibold text-gray-700 mb-1.5">Uang Diterima</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-400 font-bold text-sm">Rp</span>
+                                </div>
+                                <input type="text" id="bayar"
+                                    class="block w-full pl-10 pr-4 py-2.5 rounded-xl border-0 ring-1 ring-inset ring-gray-200 focus:ring-2 focus:ring-inset focus:ring-green-500 text-sm font-semibold input-modern"
+                                    placeholder="0" required>
+                            </div>
+                        </div>
+
+                        <!-- Kembalian (Tunai) -->
+                        <div class="flex justify-between items-center p-3 rounded-xl bg-green-50 border border-green-200" id="kembalianSection">
+                            <span class="text-xs font-semibold text-gray-700">Kembalian</span>
+                            <span id="kembalian" class="text-lg font-bold text-green-600">Rp 0</span>
+                        </div>
+
+                        <!-- QRIS Info -->
+                        <div id="qrisInfo" class="hidden p-3 rounded-xl bg-purple-50 border border-purple-200">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-6 h-6 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                                    <svg class="h-3.5 w-3.5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75h-.75v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75h-.75v-.75z" /></svg>
+                                </div>
+                                <p class="text-xs font-semibold text-purple-700">Bayar tepat sesuai total tagihan</p>
+                            </div>
+                        </div>
+
+                        <!-- Pay Button -->
+                        <button type="button" onclick="showPaymentConfirmation()" id="btnBayar"
+                            class="w-full rounded-xl bg-gradient-to-r from-green-500 to-green-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all btn-ripple"
+                            disabled>
+                            <div class="flex items-center justify-center space-x-2">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H3V10.5z" />
+                                </svg>
+                                <span>Proses Pembayaran</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,6 +196,10 @@
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-500">Total Tagihan</span>
                             <span class="font-bold text-gray-900 text-lg" id="confTagihan">Rp 0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Metode Bayar</span>
+                            <span class="font-bold text-gray-900 text-lg" id="confMetode">Tunai</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-500">Uang Diterima</span>
@@ -203,6 +238,35 @@
     let products = [];
     let cart = [];
     let totalHarga = 0;
+    let metodeBayar = 'tunai';
+
+    function selectPaymentMethod(method) {
+        metodeBayar = method;
+        document.getElementById('metodeBayar').value = method;
+
+        const btnTunai = document.getElementById('btnTunai');
+        const btnQris = document.getElementById('btnQris');
+        const bayarSection = document.getElementById('bayarSection');
+        const kembalianSection = document.getElementById('kembalianSection');
+        const qrisInfo = document.getElementById('qrisInfo');
+        const bayarInput = document.getElementById('bayar');
+
+        if (method === 'qris') {
+            btnTunai.className = 'payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300 transition-all';
+            btnQris.className = 'payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-purple-500 bg-purple-50 text-purple-700 transition-all';
+            bayarSection.classList.add('hidden');
+            kembalianSection.classList.add('hidden');
+            qrisInfo.classList.remove('hidden');
+            bayarInput.value = '';
+        } else {
+            btnTunai.className = 'payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-blue-500 bg-blue-50 text-blue-700 transition-all';
+            btnQris.className = 'payment-method-btn flex items-center justify-center space-x-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300 transition-all';
+            bayarSection.classList.remove('hidden');
+            kembalianSection.classList.remove('hidden');
+            qrisInfo.classList.add('hidden');
+        }
+        calculateKembalian();
+    }
 
     async function loadProducts() {
         try {
@@ -436,28 +500,35 @@
             document.getElementById('btnBayar').disabled = true;
         } else {
             emptyState.style.display = 'none';
-            document.getElementById('btnBayar').disabled = false;
             document.getElementById('cartItemCount').innerText = `${cart.length} item`;
+
+            if (metodeBayar === 'qris') {
+                document.getElementById('btnBayar').disabled = false;
+            }
             
             cart.forEach(item => {
                 totalHarga += item.subtotal;
                 cartEl.innerHTML += `
-                    <div class="flex justify-between items-center p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-blue-200 transition-colors">
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-blue-200 transition-colors">
                         <div class="flex-1 min-w-0">
                             <h4 class="text-sm font-semibold text-gray-900 truncate">${item.nama_barang}</h4>
-                            <div class="text-xs text-blue-600 font-bold mt-1">Rp ${Number(item.harga_jual).toLocaleString('id-ID')}</div>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-xs text-blue-600 font-bold">Rp ${Number(item.harga_jual).toLocaleString('id-ID')}</span>
+                                <span class="text-xs text-gray-400">x${item.qty}</span>
+                                <span class="text-xs text-gray-900 font-semibold">= Rp ${Number(item.subtotal).toLocaleString('id-ID')}</span>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-2 ml-3">
+                        <div class="flex items-center gap-1.5 shrink-0">
                             <button type="button" onclick="updateCartQty(${item.barang_id}, -1)" class="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg>
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" /></svg>
                             </button>
                             <input type="number" value="${item.qty}" onchange="updateCartQtyValue(${item.barang_id}, this.value)"
-                                class="w-12 px-1 py-1 text-sm font-bold text-center border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" />
+                                class="w-10 px-0.5 py-0.5 text-xs font-bold text-center border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" />
                             <button type="button" onclick="updateCartQty(${item.barang_id}, 1)" class="w-7 h-7 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-blue-50 hover:border-blue-300 transition-colors">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" /></svg>
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" /></svg>
                             </button>
-                            <button type="button" onclick="removeCartItem(${item.barang_id})" class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors ml-1">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                            <button type="button" onclick="removeCartItem(${item.barang_id})" class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors ml-0.5">
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
                     </div>
@@ -470,9 +541,29 @@
     }
 
     const bayarInput = document.getElementById('bayar');
-    bayarInput.addEventListener('input', calculateKembalian);
+    
+    // Format input as currency with thousands separator
+    bayarInput.addEventListener('input', function(e) {
+        // Remove non-digit characters
+        let value = this.value.replace(/\D/g, '');
+        
+        // Format with dot separator
+        if (value) {
+            this.value = Number(value).toLocaleString('id-ID');
+        } else {
+            this.value = '';
+        }
+        calculateKembalian();
+    });
+    
     bayarInput.addEventListener('focus', function() { if(this.value === '0') this.value = ''; });
     bayarInput.addEventListener('blur', function() { if(this.value === '') this.value = '0'; });
+    
+    // Helper function to get raw numeric value from input
+    function getRawBayarValue() {
+        const raw = bayarInput.value.replace(/\D/g, '');
+        return parseFloat(raw) || 0;
+    }
 
     async function initPage() {
         await fetchOptions('/api/kategori', 'filterKategori', true);
@@ -590,17 +681,27 @@
     }
 
     function calculateKembalian() {
+        const kembaliEl = document.getElementById('kembalian');
+
         if(cart.length === 0) {
-            document.getElementById('kembalian').innerText = 'Rp 0';
-            document.getElementById('kembalian').classList.remove('text-red-600');
-            document.getElementById('kembalian').classList.add('text-green-600');
+            kembaliEl.innerText = 'Rp 0';
+            kembaliEl.classList.remove('text-red-600');
+            kembaliEl.classList.add('text-green-600');
+            document.getElementById('btnBayar').disabled = true;
             return;
         }
 
-        const bayar = parseFloat(bayarInput.value) || 0;
+        if (metodeBayar === 'qris') {
+            kembaliEl.innerText = 'Rp 0';
+            kembaliEl.classList.remove('text-red-600');
+            kembaliEl.classList.add('text-green-600');
+            document.getElementById('btnBayar').disabled = false;
+            return;
+        }
+
+        const bayar = getRawBayarValue();
         const kembalian = bayar - totalHarga;
 
-        const kembaliEl = document.getElementById('kembalian');
         if (kembalian < 0) {
             kembaliEl.innerText = '- Rp ' + Number(Math.abs(kembalian)).toLocaleString('id-ID');
             kembaliEl.classList.add('text-red-600');
@@ -625,32 +726,42 @@
             return;
         }
 
-        const bayar = parseFloat(bayarInput.value);
-        if(isNaN(bayar) || bayar <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Input uang pembayaran tidak valid!',
-                confirmButtonColor: '#3b82f6'
-            });
-            return;
+        let bayar, kembalian;
+
+        if (metodeBayar === 'qris') {
+            bayar = totalHarga;
+            kembalian = 0;
+        } else {
+            bayar = getRawBayarValue();
+            if(isNaN(bayar) || bayar <= 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Input uang pembayaran tidak valid!',
+                    confirmButtonColor: '#3b82f6'
+                });
+                return;
+            }
+
+            if(bayar < totalHarga) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Uang Kurang',
+                    text: 'Uang pembayaran kurang dari total tagihan!',
+                    confirmButtonColor: '#3b82f6'
+                });
+                return;
+            }
+
+            kembalian = bayar - totalHarga;
         }
 
-        if(bayar < totalHarga) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Uang Kurang',
-                text: 'Uang pembayaran kurang dari total tagihan!',
-                confirmButtonColor: '#3b82f6'
-            });
-            return;
-        }
-
-        const kembalian = bayar - totalHarga;
+        const metodeLabel = metodeBayar === 'qris' ? 'QRIS' : 'Tunai';
 
         document.getElementById('confTagihan').innerText = 'Rp ' + Number(totalHarga).toLocaleString('id-ID');
         document.getElementById('confBayar').innerText = 'Rp ' + Number(bayar).toLocaleString('id-ID');
         document.getElementById('confKembalian').innerText = 'Rp ' + Number(kembalian).toLocaleString('id-ID');
+        document.getElementById('confMetode').innerText = metodeLabel;
         document.getElementById('confirmModal').classList.remove('hidden');
     }
 
@@ -660,8 +771,15 @@
 
     function executeSubmit() {
         closeConfirmModal();
-        const bayar = parseFloat(bayarInput.value);
-        const kembalian = bayar - totalHarga;
+        let bayar, kembalian;
+
+        if (metodeBayar === 'qris') {
+            bayar = totalHarga;
+            kembalian = 0;
+        } else {
+            bayar = getRawBayarValue();
+            kembalian = bayar - totalHarga;
+        }
         submitTransaction(bayar, kembalian);
     }
 
@@ -671,6 +789,7 @@
             total_harga: totalHarga,
             bayar: bayar,
             kembalian: kembalian,
+            metode_bayar: metodeBayar,
             items: cart
         };
 
@@ -689,14 +808,23 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Transaksi Berhasil!',
-                    html: `ID Transaksi: <strong class="text-blue-600">${data.transaksi_id}</strong><br>Kembalian: <strong class="text-green-600">Rp ${Number(kembalian).toLocaleString('id-ID')}</strong>`,
-                    confirmButtonColor: '#10b981'
-                }).then(() => {
+                    html: `Metode: <strong>${metodeBayar === 'qris' ? 'QRIS' : 'Tunai'}</strong>${metodeBayar === 'tunai' ? `<br>Kembalian: <strong class="text-green-600">Rp ${Number(kembalian).toLocaleString('id-ID')}</strong>` : ''}`,
+                    confirmButtonColor: '#10b981',
+                    showCancelButton: true,
+                    confirmButtonText: 'Tutup',
+                    cancelButtonText: 'Cetak Struk',
+                    cancelButtonColor: '#3b82f6',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        window.open('/transaksi/' + data.transaksi_id + '/cetak', '_blank');
+                    }
                     document.getElementById('searchInput').focus();
                 });
 
                 cart = [];
                 bayarInput.value = '';
+                selectPaymentMethod('tunai');
                 updateCartUI();
                 await loadProducts();
             } else {

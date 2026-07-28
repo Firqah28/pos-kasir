@@ -418,7 +418,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Pembelian Berhasil!',
-                    text: 'ID Transaksi: ' + data.pembelian_id,
+                    text: 'Pembelian berhasil disimpan.',
                     confirmButtonColor: '#10b981'
                 }).then(() => {
                     document.getElementById('searchInput').focus();

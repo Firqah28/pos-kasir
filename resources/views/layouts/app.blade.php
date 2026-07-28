@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'KIOS PUTRA TUNGGAL') }}</title>
+    <title>{{ $globalSettings['store_name'] ?? config('app.name', 'POS Laravel') }}</title>
+    @if(!empty($globalSettings['store_logo']))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $globalSettings['store_logo']) }}">
+    @endif
     <!-- Tailwind CSS (CDN for compatibility with previous codebase) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
@@ -121,14 +124,28 @@
             <div id="sidebar-header" class="flex h-20 shrink-0 items-center justify-between border-b border-white/10 bg-white/5 px-4 backdrop-blur-sm">
                 <div class="sidebar-header-text flex flex-col justify-center">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg">
-                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
-                            </svg>
-                        </div>
+                        @if(isset($globalSettings['store_logo']))
+                            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg overflow-hidden p-1">
+                                <img src="{{ asset('storage/' . $globalSettings['store_logo']) }}" alt="Logo" class="max-w-full max-h-full object-contain">
+                            </div>
+                        @else
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg">
+                                <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
+                                </svg>
+                            </div>
+                        @endif
                         <div>
-                            <h1 class="text-lg font-bold tracking-tight leading-tight text-white">KIOS PUTRA</h1>
-                            <span class="text-xs text-blue-200 font-semibold tracking-wide">TUNGGAL</span>
+                            @php
+                                $storeName = $globalSettings['store_name'] ?? 'Toko POS Laravel';
+                                $words = explode(' ', $storeName);
+                                $firstPart = implode(' ', array_slice($words, 0, min(2, count($words))));
+                                $secondPart = implode(' ', array_slice($words, min(2, count($words))));
+                            @endphp
+                            <h1 class="text-lg font-bold tracking-tight leading-tight text-white line-clamp-1">{{ $firstPart }}</h1>
+                            @if($secondPart)
+                                <span class="text-xs text-blue-200 font-semibold tracking-wide line-clamp-1">{{ $secondPart }}</span>
+                            @endif
                         </div>
                     </div>
                     @if(auth()->check())
@@ -208,13 +225,43 @@
 
         <!-- Main Content -->
         <div class="flex-1 main-content-wrapper sidebar-transition flex flex-col h-screen overflow-hidden">
-            <!-- Topbar for mobile -->
-            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white/80 backdrop-blur-md px-4 shadow-sm sm:gap-x-6 sm:px-6 md:hidden">
+            <!-- Topbar for mobile and desktop -->
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-x-4 border-b border-gray-200 bg-white/80 backdrop-blur-md px-4 shadow-sm sm:gap-x-6 sm:px-6">
+                <!-- Mobile menu button -->
                 <button type="button" onclick="toggleSidebar()" class="-m-2.5 p-2.5 text-gray-700 md:hidden border rounded-lg hover:bg-gray-50 focus:outline-none">
                     <span class="sr-only">Open sidebar</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
                 </button>
-                <div class="flex-1 font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">KIOS PUTRA TUNGGAL</div>
+                
+                <div class="flex-1 font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 md:hidden">
+                    @php
+                        $storeName = $globalSettings['store_name'] ?? 'Toko POS Laravel';
+                        $words = explode(' ', $storeName);
+                        $firstPart = implode(' ', array_slice($words, 0, min(2, count($words))));
+                    @endphp
+                    {{ $firstPart }}
+                </div>
+                
+                <!-- Spacer for desktop left side -->
+                <div class="hidden md:block flex-1"></div>
+
+                <!-- Right side (Profile logo) -->
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                <div class="flex items-center gap-x-4 lg:gap-x-6">
+                    <a href="{{ route('profil.index') }}" class="flex items-center gap-x-2 rounded-full p-1 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200" title="Edit Profil Toko">
+                        @if(isset($globalSettings['store_logo']))
+                            <img class="h-8 w-8 rounded-full bg-white object-contain border border-gray-200 p-0.5 shadow-sm" src="{{ asset('storage/' . $globalSettings['store_logo']) }}" alt="Logo">
+                        @else
+                            <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center border border-blue-200 shadow-sm">
+                                <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                            </div>
+                        @endif
+                        <span class="hidden md:flex md:items-center pr-2">
+                            <span class="text-sm font-semibold leading-6 text-gray-700" aria-hidden="true">{{ auth()->user()->name }}</span>
+                        </span>
+                    </a>
+                </div>
+                @endif
             </div>
 
             <!-- Page Content -->
@@ -224,7 +271,7 @@
             
             <!-- Footer -->
             <footer class="py-4 px-6 text-center text-xs text-gray-500">
-                &copy; {{ date('Y') }} <strong class="text-blue-600">KIOS PUTRA TUNGGAL</strong>. All rights reserved.
+                &copy; {{ date('Y') }} <strong class="text-blue-600">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</strong>. All rights reserved.
             </footer>
         </div>
     </div>

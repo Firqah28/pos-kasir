@@ -9,6 +9,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     // Both Admin and Kasir can access Dashboard and Kasir
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
+    Route::get('/transaksi/{id}/cetak', [KasirController::class, 'cetakStruk'])->name('transaksi.cetak');
 
     // Only Admin can access Master Data and Reports UI
     Route::middleware(['role:admin'])->group(function () {
@@ -28,6 +30,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
         Route::get('/pembelian', [PembelianController::class, 'index'])->name('pembelian.index');
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        
+        // Profile / Store Settings
+        Route::get('/profil', [ProfileController::class, 'index'])->name('profil.index');
+        Route::put('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::delete('/profil/logo', [ProfileController::class, 'removeLogo'])->name('profil.removeLogo');
     });
 });
 
