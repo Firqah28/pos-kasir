@@ -240,6 +240,35 @@
     let totalHarga = 0;
     let metodeBayar = 'tunai';
 
+    function numberToWords(n) {
+        const satuan = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan'];
+        const belasan = ['sepuluh', 'sebelas', 'dua belas', 'tiga belas', 'empat belas', 'lima belas', 'enam belas', 'tujuh belas', 'delapan belas', 'sembilan belas'];
+        const puluhan = ['', '', 'dua puluh', 'tiga puluh', 'empat puluh', 'lima puluh', 'enam puluh', 'tujuh puluh', 'delapan puluh', 'sembilan puluh'];
+
+        if (n === 0) return 'nol';
+        let words = '';
+        if (n >= 1000000) { words += numberToWords(Math.floor(n / 1000000)) + ' juta '; n %= 1000000; }
+        if (n >= 1000) { words += numberToWords(Math.floor(n / 1000)) + ' ribu '; n %= 1000; }
+        if (n >= 100) { words += satuan[Math.floor(n / 100)] + ' ratus '; n %= 100; }
+        if (n >= 20) { words += puluhan[Math.floor(n / 10)] + ' '; n %= 10; }
+        if (n >= 11) { words += belasan[n - 10] + ' '; n = 0; }
+        if (n === 10) { words += 'sepuluh '; n = 0; }
+        if (n > 0) { words += satuan[n] + ' '; }
+        return words.trim();
+    }
+
+    function playSuccessSound(bayar, kembalian) {
+        try {
+            const text = 'Transaksi Berhasil. Uang diterima ' + numberToWords(bayar) + ' rupiah, kembalian ' + numberToWords(kembalian) + ' rupiah. Terima kasih, selamat datang kembali!';
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'id-ID';
+            utter.rate = 1.0;
+            utter.pitch = 1.1;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utter);
+        } catch(e) {}
+    }
+
     function selectPaymentMethod(method) {
         metodeBayar = method;
         document.getElementById('metodeBayar').value = method;
@@ -805,6 +834,7 @@
 
             if(res.ok) {
                 const data = await res.json();
+                playSuccessSound(bayar, kembalian);
                 Swal.fire({
                     icon: 'success',
                     title: 'Transaksi Berhasil!',

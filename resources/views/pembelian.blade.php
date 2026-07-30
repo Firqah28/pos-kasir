@@ -157,6 +157,17 @@
 </div>
 
 <script>
+    function playSuccessSound() {
+        try {
+            const utter = new SpeechSynthesisUtterance('Pembelian Berhasil');
+            utter.lang = 'id-ID';
+            utter.rate = 1.1;
+            utter.pitch = 1.2;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utter);
+        } catch(e) {}
+    }
+
     let products = [];
     let cart = [];
     let totalHarga = 0;
@@ -415,6 +426,7 @@
 
             if (res.ok) {
                 const data = await res.json();
+                playSuccessSound();
                 Swal.fire({
                     icon: 'success',
                     title: 'Pembelian Berhasil!',
