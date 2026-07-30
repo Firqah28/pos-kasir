@@ -238,6 +238,7 @@
 </div>
 
 <div id="strukPrintArea" class="hidden"></div>
+<span id="storeNameDisplay" class="hidden">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</span>
 
 <style>
     @media print {
@@ -274,7 +275,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 80mm; 
+            width: 58mm; 
             max-width: 100%;
             margin: 0;
             padding: 5mm;
@@ -341,7 +342,7 @@
 <div id="printArea" class="hidden">
     <div class="print-header flex justify-between items-end">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">POS SYSTEM</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{ $globalSettings['store_name'] ?? 'Laporan' }}</h1>
             <p class="text-gray-600">Laporan Operasional Toko</p>
         </div>
         <div class="text-right">
@@ -424,6 +425,7 @@
     };
 
     function printReceipt(type) {
+        const storeName = document.getElementById('storeNameDisplay').innerText;
         let html = '';
         if (type === 'penjualan') {
             const tanggal = document.getElementById('detailPenjualanTanggal').innerText;
@@ -448,7 +450,7 @@
             
             html = `
             <div class="struk-header">
-                <h3>POS SYSTEM</h3><p>Struk Penjualan</p>
+                <h3>${storeName}</h3><p>Struk Penjualan</p>
             </div>
             <div class="struk-info">
                 <p>Tanggal: ${tanggal}</p><p>Kasir: ${kasir}</p>
@@ -486,7 +488,7 @@
             
             html = `
             <div class="struk-header">
-                <h3>POS SYSTEM</h3><p>Bukti Restock/Pembelian</p>
+                <h3>${storeName}</h3><p>Bukti Restock/Pembelian</p>
             </div>
             <div class="struk-info">
                 <p>Tanggal: ${tanggal}</p>
