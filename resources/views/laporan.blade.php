@@ -530,6 +530,13 @@
         loadLaporan();
     });
 
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            document.getElementById('filterDate').value = new Date().toLocaleDateString('en-CA');
+            loadLaporan();
+        }
+    });
+
     async function loadLaporan() {
         try {
             const filterDateVal = document.getElementById('filterDate').value || new Date().toLocaleDateString('en-CA');

@@ -133,27 +133,27 @@ class LaporanController extends Controller
         $date = $request->query('date');
 
         $penjualan = DB::select(
-            "SELECT DATE_FORMAT(CONVERT_TZ(t.created_at, '+00:00', '+08:00'), '%Y-%m-%d %H:00:00') as jam,
+            "SELECT DATE_FORMAT(t.created_at, '%Y-%m-%d %H:00:00') as jam,
                     COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan
              FROM transaksi t
-             WHERE DATE(CONVERT_TZ(t.created_at, '+00:00', '+08:00')) = ?
+             WHERE DATE(t.created_at) = ?
              GROUP BY jam",
             [$date]
         );
         $hpp = DB::select(
-            "SELECT DATE_FORMAT(CONVERT_TZ(t2.created_at, '+00:00', '+08:00'), '%Y-%m-%d %H:00:00') as jam,
+            "SELECT DATE_FORMAT(t2.created_at, '%Y-%m-%d %H:00:00') as jam,
                     SUM(dt.harga_modal * dt.qty) as total_hpp
              FROM detail_transaksi dt
              JOIN transaksi t2 ON dt.transaksi_id = t2.id
-             WHERE DATE(CONVERT_TZ(t2.created_at, '+00:00', '+08:00')) = ?
+             WHERE DATE(t2.created_at) = ?
              GROUP BY jam",
             [$date]
         );
         $pembelian = DB::select(
-            "SELECT DATE_FORMAT(CONVERT_TZ(p.created_at, '+00:00', '+08:00'), '%Y-%m-%d %H:00:00') as jam,
+            "SELECT DATE_FORMAT(p.created_at, '%Y-%m-%d %H:00:00') as jam,
                     SUM(p.total_harga) as total_pembelian
              FROM pembelian p
-             WHERE DATE(CONVERT_TZ(p.created_at, '+00:00', '+08:00')) = ?
+             WHERE DATE(p.created_at) = ?
              GROUP BY jam",
             [$date]
         );
@@ -171,7 +171,7 @@ class LaporanController extends Controller
             ->select('t.id', 't.total_harga', 't.bayar', 't.kembalian', 't.created_at', 'u.username as kasir_name');
             
         if ($startDate && $endDate) {
-            $query->whereRaw('DATE(CONVERT_TZ(t.created_at, \'+00:00\', \'+08:00\')) BETWEEN ? AND ?', [$startDate, $endDate]);
+            $query->whereRaw('DATE(t.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->orderByDesc('t.created_at')->get();
@@ -208,7 +208,7 @@ class LaporanController extends Controller
             ->select('p.id', 'p.total_harga', 'p.created_at', 'u.username as admin_name', 's.nama_supplier');
 
         if ($startDate && $endDate) {
-            $query->whereRaw('DATE(CONVERT_TZ(p.created_at, \'+00:00\', \'+08:00\')) BETWEEN ? AND ?', [$startDate, $endDate]);
+            $query->whereRaw('DATE(p.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->orderByDesc('p.created_at')->get();
@@ -246,7 +246,7 @@ class LaporanController extends Controller
             ->select('b.nama_barang', DB::raw('SUM(dt.qty) as total_qty'), DB::raw('SUM(dt.subtotal) as total_pendapatan'));
 
         if ($startDate && $endDate) {
-            $query->whereRaw('DATE(CONVERT_TZ(t.created_at, \'+00:00\', \'+08:00\')) BETWEEN ? AND ?', [$startDate, $endDate]);
+            $query->whereRaw('DATE(t.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->groupBy('dt.barang_id', 'b.nama_barang')
