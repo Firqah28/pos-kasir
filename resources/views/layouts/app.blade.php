@@ -7,6 +7,13 @@
     @if(!empty($globalSettings['store_logo']))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $globalSettings['store_logo']) }}">
     @endif
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KIOS POS">
+    <link rel="apple-touch-icon" href="{{ asset('icons/apple-touch-icon.png') }}">
     <!-- Tailwind CSS (CDN for compatibility with previous codebase) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
@@ -308,6 +315,13 @@
                 updateSidebarIcons(isMini);
             }
         });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
     </script>
 </body>
 </html>
