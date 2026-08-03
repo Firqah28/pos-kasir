@@ -123,7 +123,10 @@
         showInstallPrompt();
     });
 
-    if (isStandalone()) return;
+    if (isStandalone()) {
+        document.documentElement.classList.add('pwa-standalone');
+        return;
+    }
 
     if (isIOS) {
         var dismissed = false;

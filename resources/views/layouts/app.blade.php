@@ -2,7 +2,7 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{ $globalSettings['store_name'] ?? config('app.name', 'POS Laravel') }}</title>
     @if(!empty($globalSettings['store_logo']))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . $globalSettings['store_logo']) }}">
@@ -114,6 +114,12 @@
         }
 
         .responsive-table-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+        /* Standalone (installed shortcut) view */
+        html.pwa-standalone .app-topbar { height: auto; min-height: 4rem; padding-top: env(safe-area-inset-top); }
+        html.pwa-standalone #sidebar-header { padding-top: calc(env(safe-area-inset-top) + 1rem); }
+        html.pwa-standalone .main-content-wrapper { padding-bottom: env(safe-area-inset-bottom); }
+        html.pwa-standalone footer { padding-bottom: calc(env(safe-area-inset-bottom) + 1rem); }
     </style>
 </head>
 <body class="h-full bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
@@ -234,7 +240,7 @@
         <!-- Main Content -->
         <div class="flex-1 main-content-wrapper sidebar-transition flex flex-col h-screen overflow-hidden">
             <!-- Topbar for mobile and desktop -->
-            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-x-4 border-b border-gray-200 bg-white/80 backdrop-blur-md px-4 shadow-sm sm:gap-x-6 sm:px-6">
+            <div class="app-topbar sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between gap-x-4 border-b border-gray-200 bg-white/80 backdrop-blur-md px-4 shadow-sm sm:gap-x-6 sm:px-6">
                 <!-- Mobile menu button -->
                 <button type="button" onclick="toggleSidebar()" class="-m-2.5 p-2.5 text-gray-700 md:hidden border rounded-lg hover:bg-gray-50 focus:outline-none">
                     <span class="sr-only">Open sidebar</span>
