@@ -14,6 +14,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KIOS POS">
     <link rel="apple-touch-icon" href="{{ asset('icons/apple-touch-icon.png') }}">
+    <script src="{{ asset('js/pwa-install.js') }}" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
