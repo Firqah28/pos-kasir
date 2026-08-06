@@ -19,15 +19,16 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 2px;
         }
         .header h2 {
-            margin: 0;
-            font-size: 14px; /* Dikecilkan sedikit agar muat di 58mm */
+            margin: 0 0 10px;
+            font-size: 9px;
             font-weight: bold;
+            white-space: nowrap;
         }
         .header p {
-            margin: 2px 0;
+            margin: 0;
             font-size: 11px;
         }
         .divider {
@@ -90,7 +91,7 @@
 <body onload="window.print()">
 
     <div class="header">
-        <h2>{{ $globalSettings['store_name'] ?? 'Toko POS Laravel' }}</h2>
+        <h2 style="font-size: {{ max(7, min(9, (int) floor(181 / (max(1, mb_strlen($globalSettings['store_name'] ?? 'Toko POS Laravel')) * 0.6)))) }}px">{{ mb_strtoupper($globalSettings['store_name'] ?? 'Toko POS Laravel') }}</h2>
         @if(!empty($globalSettings['store_alamat']))
             <p>{{ $globalSettings['store_alamat'] }}</p>
         @endif
