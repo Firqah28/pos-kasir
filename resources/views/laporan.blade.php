@@ -385,7 +385,7 @@
             padding: 5mm;
         }
         .struk-header { text-align: center; margin-bottom: 10px; }
-        .struk-header h3 { font-size: 11px; font-weight: bold; margin: 0; }
+        .struk-header h3 { font-size: 9px; font-weight: bold; margin: 0; }
         .struk-header p { margin: 0; font-size: 12px; }
         .struk-info p { margin: 2px 0; }
         .struk-divider { text-align: center; margin: 5px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
