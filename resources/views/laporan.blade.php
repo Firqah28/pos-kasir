@@ -416,7 +416,7 @@
     }
 
     function printReceipt(type) {
-        const storeName = document.getElementById('storeNameDisplay').innerText;
+        const storeName = document.getElementById('storeNameDisplay').innerText.toUpperCase();
         const storeFont = Math.max(7, Math.min(9, Math.floor(181 / (storeName.length * 0.6))));
         let html = '';
         if (type === 'penjualan') {
