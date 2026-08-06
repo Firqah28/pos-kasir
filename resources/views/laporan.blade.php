@@ -385,7 +385,7 @@
             padding: 5mm;
         }
         .struk-header { text-align: center; margin-bottom: 10px; }
-        .struk-header h3 { font-size: 9px; font-weight: bold; margin: 0; }
+        .struk-header h3 { font-size: 9px; font-weight: bold; margin: 0; white-space: nowrap; }
         .struk-header p { margin: 0; font-size: 12px; }
         .struk-info p { margin: 2px 0; }
         .struk-divider { text-align: center; margin: 5px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
@@ -417,6 +417,7 @@
 
     function printReceipt(type) {
         const storeName = document.getElementById('storeNameDisplay').innerText;
+        const storeFont = Math.max(7, Math.min(9, Math.floor(181 / (storeName.length * 0.6))));
         let html = '';
         if (type === 'penjualan') {
             const tanggal = document.getElementById('detailPenjualanTanggal').innerText;
@@ -441,7 +442,7 @@
             
             html = `
             <div class="struk-header">
-                <h3>${storeName}</h3><p>Struk Penjualan</p>
+                <h3 style="font-size:${storeFont}px">${storeName}</h3><p>Struk Penjualan</p>
             </div>
             <div class="struk-info">
                 <p>Tanggal: ${tanggal}</p><p>Kasir: ${kasir}</p>
@@ -479,7 +480,7 @@
             
             html = `
             <div class="struk-header">
-                <h3>${storeName}</h3><p>Bukti Restock/Pembelian</p>
+                <h3 style="font-size:${storeFont}px">${storeName}</h3><p>Bukti Restock/Pembelian</p>
             </div>
             <div class="struk-info">
                 <p>Tanggal: ${tanggal}</p>
