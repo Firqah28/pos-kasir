@@ -237,14 +237,11 @@
     </div>
 </div>
 
-<div id="strukPrintArea" class="hidden"></div>
 <span id="storeNameDisplay" class="hidden">{{ $globalSettings['store_name'] ?? 'KIOS PUTRA TUNGGAL' }}</span>
 
 <style>
     @media print {
         @page { size: A4; margin: 0.5cm; }
-        /* Struk uses the printer's default paper size (thermal 58mm roll) */
-        @page struk { size: auto; margin: 0; }
         
         body.is-printing * {
             visibility: hidden;
@@ -265,61 +262,6 @@
             background: white;
             color: black;
         }
-
-        /* Struk format specifically for thermal printers */
-        body.is-printing-struk * { visibility: hidden; }
-        body.is-printing-struk #strukPrintArea,
-        body.is-printing-struk #strukPrintArea * { visibility: visible; }
-
-        body.is-printing-struk { height: auto !important; }
-        html.is-printing-struk { height: auto !important; }
-
-        body.is-printing-struk #sidebar,
-        body.is-printing-struk .min-h-full,
-        body.is-printing-struk .sidebar-overlay,
-        body.is-printing-struk .app-topbar,
-        body.is-printing-struk .sticky.top-0,
-        body.is-printing-struk .max-w-7xl,
-        body.is-printing-struk .main-content-wrapper,
-        body.is-printing-struk footer,
-        body.is-printing-struk #receiptModal,
-        body.is-printing-struk #receiptPenjualanModal { display: none !important; }
-
-        body.is-printing-struk .h-screen,
-        body.is-printing-struk .h-full,
-        body.is-printing-struk .overflow-hidden,
-        body.is-printing-struk .overflow-y-auto {
-            height: auto !important;
-            min-height: 0 !important;
-            overflow: visible !important;
-        }
-
-        body.is-printing-struk #strukPrintArea {
-            visibility: visible !important;
-            display: block !important;
-            position: static;
-            page: struk;
-            width: 58mm;
-            max-width: 100%;
-            margin: 0;
-            padding: 5mm;
-            background: white;
-            color: black;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-
-        .struk-header { text-align: center; margin-bottom: 10px; }
-        .struk-header h3 { font-size: 16px; font-weight: bold; margin: 0; }
-        .struk-header p { margin: 0; font-size: 12px; }
-        .struk-info p { margin: 2px 0; }
-        .struk-divider { text-align: center; margin: 5px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
-        .struk-item { margin-bottom: 5px; }
-        .struk-item-name { font-weight: bold; }
-        .struk-item-details, .struk-line { display: flex; justify-content: space-between; }
-        .struk-summary { margin-top: 5px; font-weight: bold; }
-        .text-center { text-align: center; }
 
         /* Hide elements that offset the print area */
         body.is-printing #sidebar,
@@ -425,31 +367,53 @@
 </div>
 
 <script>
-    let printMode = 'rekapan';
+    window.onbeforeprint = () => document.body.classList.add('is-printing');
 
-    function setPrintMode(mode) {
-        printMode = mode;
-        if (mode === 'struk') {
-            document.body.classList.remove('is-printing');
-            document.body.classList.add('is-printing-struk');
-            document.documentElement.classList.add('is-printing-struk');
-            document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = 'none');
-        } else {
-            document.body.classList.remove('is-printing-struk');
-            document.body.classList.add('is-printing');
-            document.documentElement.classList.remove('is-printing-struk');
-            document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = '');
+    window.onafterprint = () => document.body.classList.remove('is-printing');
+
+    const strukPrintCss = `
+        @page { size: auto; margin: 0; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #000;
+            width: 58mm;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 5mm;
         }
+        .struk-header { text-align: center; margin-bottom: 10px; }
+        .struk-header h3 { font-size: 16px; font-weight: bold; margin: 0; }
+        .struk-header p { margin: 0; font-size: 12px; }
+        .struk-info p { margin: 2px 0; }
+        .struk-divider { text-align: center; margin: 5px 0; letter-spacing: 2px; overflow: hidden; white-space: nowrap; }
+        .struk-item { margin-bottom: 5px; }
+        .struk-item-name { font-weight: bold; }
+        .struk-item-details, .struk-line { display: flex; justify-content: space-between; }
+        .struk-summary { margin-top: 5px; font-weight: bold; }
+        .text-center { text-align: center; }
+    `;
+
+    let strukPrintFrame = null;
+
+    function printStruk(html) {
+        if (!strukPrintFrame || !strukPrintFrame.contentDocument) {
+            strukPrintFrame = document.createElement('iframe');
+            strukPrintFrame.setAttribute('aria-hidden', 'true');
+            strukPrintFrame.style.cssText = 'position: fixed; left: -9999px; top: 0; width: 58mm; height: 300mm; border: 0; background: #fff;';
+            document.body.appendChild(strukPrintFrame);
+        }
+        const doc = strukPrintFrame.contentDocument;
+        doc.open();
+        doc.write('<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Struk</title><style>' + strukPrintCss + '</style></head><body>' + html + '</body></html>');
+        doc.close();
+        setTimeout(() => {
+            strukPrintFrame.contentWindow.focus();
+            strukPrintFrame.contentWindow.print();
+        }, 100);
     }
-
-    window.onbeforeprint = () => setPrintMode(printMode);
-
-    window.onafterprint = () => {
-        document.body.classList.remove('is-printing', 'is-printing-struk');
-        document.documentElement.classList.remove('is-printing-struk');
-        document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = '');
-        printMode = 'rekapan'; // reset
-    };
 
     function printReceipt(type) {
         const storeName = document.getElementById('storeNameDisplay').innerText;
@@ -532,9 +496,7 @@
             `;
         }
         
-        document.getElementById('strukPrintArea').innerHTML = html;
-        setPrintMode('struk');
-        window.print();
+        printStruk(html);
     }
 
     let combinedChartInstance = null;
@@ -555,10 +517,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const strukArea = document.getElementById('strukPrintArea');
-        if (strukArea) {
-            document.body.appendChild(strukArea);
-        }
         document.getElementById('filterDate').value = new Date().toLocaleDateString('en-CA');
         loadLaporan();
     });
@@ -905,7 +863,7 @@
                 `;
             });
         }
-        setPrintMode('rekapan');
+        document.body.classList.add('is-printing');
         window.print();
     }
 </script>
