@@ -427,16 +427,23 @@
 <script>
     let printMode = 'rekapan';
 
-    window.onbeforeprint = () => {
-        if (printMode === 'rekapan') {
-            document.body.classList.add('is-printing');
-        } else if (printMode === 'struk') {
+    function setPrintMode(mode) {
+        printMode = mode;
+        if (mode === 'struk') {
+            document.body.classList.remove('is-printing');
             document.body.classList.add('is-printing-struk');
             document.documentElement.classList.add('is-printing-struk');
             document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = 'none');
+        } else {
+            document.body.classList.remove('is-printing-struk');
+            document.body.classList.add('is-printing');
+            document.documentElement.classList.remove('is-printing-struk');
+            document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = '');
         }
-    };
-    
+    }
+
+    window.onbeforeprint = () => setPrintMode(printMode);
+
     window.onafterprint = () => {
         document.body.classList.remove('is-printing', 'is-printing-struk');
         document.documentElement.classList.remove('is-printing-struk');
@@ -526,7 +533,7 @@
         }
         
         document.getElementById('strukPrintArea').innerHTML = html;
-        printMode = 'struk';
+        setPrintMode('struk');
         window.print();
     }
 
@@ -898,6 +905,7 @@
                 `;
             });
         }
+        setPrintMode('rekapan');
         window.print();
     }
 </script>
