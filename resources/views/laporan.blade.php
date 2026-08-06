@@ -243,6 +243,8 @@
 <style>
     @media print {
         @page { size: A4; margin: 0.5cm; }
+        /* Struk uses the printer's default paper size (thermal 58mm roll) */
+        @page struk { size: auto; margin: 0; }
         
         body.is-printing * {
             visibility: hidden;
@@ -268,14 +270,36 @@
         body.is-printing-struk * { visibility: hidden; }
         body.is-printing-struk #strukPrintArea,
         body.is-printing-struk #strukPrintArea * { visibility: visible; }
-        
+
+        body.is-printing-struk { height: auto !important; }
+        html.is-printing-struk { height: auto !important; }
+
+        body.is-printing-struk #sidebar,
+        body.is-printing-struk .min-h-full,
+        body.is-printing-struk .sidebar-overlay,
+        body.is-printing-struk .app-topbar,
+        body.is-printing-struk .sticky.top-0,
+        body.is-printing-struk .max-w-7xl,
+        body.is-printing-struk .main-content-wrapper,
+        body.is-printing-struk footer,
+        body.is-printing-struk #receiptModal,
+        body.is-printing-struk #receiptPenjualanModal { display: none !important; }
+
+        body.is-printing-struk .h-screen,
+        body.is-printing-struk .h-full,
+        body.is-printing-struk .overflow-hidden,
+        body.is-printing-struk .overflow-y-auto {
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+        }
+
         body.is-printing-struk #strukPrintArea {
             visibility: visible !important;
             display: block !important;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 58mm; 
+            position: static;
+            page: struk;
+            width: 58mm;
             max-width: 100%;
             margin: 0;
             padding: 5mm;
@@ -285,12 +309,6 @@
             font-size: 12px;
             line-height: 1.4;
         }
-
-        body.is-printing-struk #sidebar,
-        body.is-printing-struk .sticky.top-0,
-        body.is-printing-struk .max-w-7xl,
-        body.is-printing-struk #receiptModal,
-        body.is-printing-struk #receiptPenjualanModal { display: none !important; }
 
         .struk-header { text-align: center; margin-bottom: 10px; }
         .struk-header h3 { font-size: 16px; font-weight: bold; margin: 0; }
@@ -414,12 +432,14 @@
             document.body.classList.add('is-printing');
         } else if (printMode === 'struk') {
             document.body.classList.add('is-printing-struk');
+            document.documentElement.classList.add('is-printing-struk');
             document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = 'none');
         }
     };
     
     window.onafterprint = () => {
         document.body.classList.remove('is-printing', 'is-printing-struk');
+        document.documentElement.classList.remove('is-printing-struk');
         document.querySelectorAll('[role="dialog"]').forEach(d => d.style.display = '');
         printMode = 'rekapan'; // reset
     };
@@ -528,6 +548,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const strukArea = document.getElementById('strukPrintArea');
+        if (strukArea) {
+            document.body.appendChild(strukArea);
+        }
         document.getElementById('filterDate').value = new Date().toLocaleDateString('en-CA');
         loadLaporan();
     });
