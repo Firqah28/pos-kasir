@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,7 +24,8 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // Tolak login jika toko milik user sedang dinonaktifkan.
-            if ($this->storeIsInactive()) {
+            // Status "menunggu_pembayaran" tetap boleh login (dibatasi transaksinya).
+            if ($user->store && $user->store->status === Store::STATUS_NONAKTIF) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

@@ -23,6 +23,7 @@ class Store extends Model
         'alamat',
         'telepon',
         'status',
+        'activated_at',
         'fee_persen',
     ];
 
@@ -55,7 +56,9 @@ class Store extends Model
      */
     protected function casts(): array
     {
-        return [];
+        return [
+            'activated_at' => 'datetime',
+        ];
     }
 
     public function isAktif(): bool
@@ -86,5 +89,10 @@ class Store extends Model
     public function fees(): HasMany
     {
         return $this->hasMany(StoreFee::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(StoreNotification::class);
     }
 }

@@ -26,7 +26,7 @@ class PembelianController extends Controller
         */
 
         if ($this->storeIsInactive()) {
-            return response()->json(['error' => 'Toko sedang dinonaktifkan, tidak dapat memproses pembelian.'], 403);
+            return response()->json(['error' => $this->storeBlockMessage()], 403);
         }
 
         DB::beginTransaction();

@@ -285,9 +285,52 @@
                 <!-- Spacer for desktop left side -->
                 <div class="hidden md:block flex-1"></div>
 
-                <!-- Right side (Profile logo) -->
-                @if($showAdminMenu)
+                <!-- Right side (Notifikasi & Profile) -->
+                @if($isMaster || $showAdminMenu)
                 <div class="flex items-center gap-x-4 lg:gap-x-6">
+                    @if($isMaster)
+                    <div class="relative" id="notifWrapper">
+                        <button type="button" id="notifBell" onclick="document.getElementById('notifDropdown').classList.toggle('hidden')" class="relative -m-2.5 p-2.5 text-gray-700 hover:bg-gray-100 rounded-full transition-colors" title="Notifikasi">
+                            <span class="sr-only">Notifikasi</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
+                            @if(($masterUnreadCount ?? 0) > 0)
+                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white">{{ $masterUnreadCount > 9 ? '9+' : $masterUnreadCount }}</span>
+                            @endif
+                        </button>
+
+                        <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-soft-lg border border-gray-100 z-50 overflow-hidden">
+                            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                                <h3 class="text-sm font-bold text-gray-900">Notifikasi</h3>
+                                @if(($masterUnreadCount ?? 0) > 0)
+                                <form action="{{ route('pusat.notifications.read') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-xs font-semibold text-blue-600 hover:text-blue-800">Tandai dibaca</button>
+                                </form>
+                                @endif
+                            </div>
+
+                            @if(($masterNotifications ?? collect())->isEmpty())
+                                <div class="px-4 py-8 text-center text-sm text-gray-400">Tidak ada notifikasi baru.</div>
+                            @else
+                                <div class="max-h-80 overflow-y-auto">
+                                    @foreach($masterNotifications as $notif)
+                                    <a href="{{ route('pusat.fee') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors">
+                                        <div class="w-8 h-8 shrink-0 rounded-lg bg-amber-50 flex items-center justify-center">
+                                            <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-sm text-gray-700 leading-snug line-clamp-2">{{ $notif->message }}</p>
+                                            <p class="mt-0.5 text-xs text-gray-400">{{ $notif->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($showAdminMenu)
                     <a href="{{ route('profil.index') }}" class="flex items-center gap-x-2 rounded-full p-1 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200" title="Edit Profil Toko">
                         @if(isset($globalSettings['store_logo']))
                             <img class="h-8 w-8 rounded-full bg-white object-contain border border-gray-200 p-0.5 shadow-sm" src="{{ asset('storage/' . $globalSettings['store_logo']) }}" alt="Logo">
@@ -300,6 +343,7 @@
                             <span class="text-sm font-semibold leading-6 text-gray-700" aria-hidden="true">{{ auth()->user()->username }}</span>
                         </span>
                     </a>
+                    @endif
                 </div>
                 @endif
             </div>
@@ -316,6 +360,14 @@
                         <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
                         Kembali ke Pusat
                     </a>
+                </div>
+            @endif
+
+            @if(($storePendingPayment ?? false))
+                <!-- Peringatan: toko menunggu pembayaran fee -->
+                <div class="shrink-0 flex items-center justify-center gap-3 bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2.5 sm:px-6 text-white text-sm">
+                    <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>
+                    <span class="text-center">Cabang Anda <strong>menunggu pembayaran fee</strong>. Anda tetap bisa masuk, tetapi transaksi dibatasi sampai pembayaran dikonfirmasi super admin.</span>
                 </div>
             @endif
 
@@ -362,6 +414,14 @@
                 const isMini = localStorage.getItem('sidebar-mini') === 'true';
                 updateSidebarIcons(isMini);
             }
+
+            document.addEventListener('click', (e) => {
+                const wrapper = document.getElementById('notifWrapper');
+                const dropdown = document.getElementById('notifDropdown');
+                if (wrapper && dropdown && !wrapper.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
         });
     </script>
     <script>

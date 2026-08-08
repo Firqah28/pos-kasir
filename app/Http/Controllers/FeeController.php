@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Models\StoreNotification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -93,7 +94,14 @@ class FeeController extends Controller
             );
         }
 
-        $store->update(['status' => $status]);
+        $store->update([
+            'status' => $status,
+            'activated_at' => $status === Store::STATUS_AKTIF ? now() : $store->activated_at,
+        ]);
+
+        if ($status !== Store::STATUS_AKTIF) {
+            StoreNotification::pendingForStore($store->id)->each(fn ($n) => $n->markAsRead());
+        }
 
         $pesan = match ($status) {
             Store::STATUS_AKTIF => "Status {$store->nama_toko} diubah menjadi Aktif (fee periode {$periode} dianggap lunas).",

@@ -7,6 +7,7 @@ use App\Http\Controllers\FeeController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StoreController;
@@ -36,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
         // Tagihan fee cabang
         Route::get('/fee', [FeeController::class, 'index'])->name('pusat.fee');
         Route::post('/fee/{id}/status', [FeeController::class, 'updateStatus'])->name('pusat.fee.status');
+
+        // Notifikasi superadmin
+        Route::post('/notifications/read', [NotificationController::class, 'markAllRead'])->name('pusat.notifications.read');
 
         // Masuk/keluar detail cabang (preview dashboard, barang, laporan cabang)
         Route::get('/cabang/{store}/masuk', [DashboardController::class, 'previewEnter'])->name('pusat.cabang.masuk');
