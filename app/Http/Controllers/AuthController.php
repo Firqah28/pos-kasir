@@ -20,8 +20,23 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            // Tolak login jika toko milik user sedang dinonaktifkan.
+            if ($this->storeIsInactive()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'username' => 'Akun tidak dapat masuk karena toko sedang dinonaktifkan.',
+                ])->onlyInput('username');
+            }
+
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            // Arahkan user ke halaman sesuai role-nya.
+            return redirect()->intended(route($user->homeRoute()));
         }
 
         return back()->withErrors([

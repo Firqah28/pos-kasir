@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PembelianController extends Controller
@@ -24,20 +25,15 @@ class PembelianController extends Controller
           }
         */
 
+        if ($this->storeIsInactive()) {
+            return response()->json(['error' => 'Toko sedang dinonaktifkan, tidak dapat memproses pembelian.'], 403);
+        }
+
         DB::beginTransaction();
         try {
-            $user = DB::table('users')->first();
-            if (!$user) {
-                $userId = DB::table('users')->insertGetId([
-                    'username' => 'admin',
-                    'password' => bcrypt('password'),
-                    'role' => 'admin',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            } else {
-                $userId = $user->id;
-            }
+            $user = Auth::user();
+            $userId = $user ? $user->id : null;
+            $storeId = $this->currentStoreId();
 
             $totalHarga = 0;
             foreach ($request->items as $item) {
@@ -46,10 +42,11 @@ class PembelianController extends Controller
 
             $pembelianId = DB::table('pembelian')->insertGetId([
                 'user_id' => $userId,
+                'store_id' => $storeId,
                 'supplier_id' => $request->supplier_id,
                 'total_harga' => $totalHarga,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             foreach ($request->items as $item) {
@@ -57,26 +54,32 @@ class PembelianController extends Controller
 
                 DB::table('detail_pembelian')->insert([
                     'pembelian_id' => $pembelianId,
+                    'store_id' => $storeId,
                     'barang_id' => $item['barang_id'],
                     'harga_beli' => $item['harga_beli'],
                     'qty' => $item['qty'],
-                    'subtotal' => $subtotal
+                    'subtotal' => $subtotal,
                 ]);
 
                 // Increase stock and update harga_beli in barang
-                DB::table('barang')->where('id', $item['barang_id'])->update([
-                    'harga_beli' => $item['harga_beli'],
-                    'stok' => DB::raw("stok + {$item['qty']}"),
-                    'updated_at' => now()
-                ]);
+                DB::table('barang')
+                    ->where('id', $item['barang_id'])
+                    ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+                    ->update([
+                        'harga_beli' => $item['harga_beli'],
+                        'stok' => DB::raw("stok + {$item['qty']}"),
+                        'updated_at' => now(),
+                    ]);
             }
 
             DB::commit();
+
             return response()->json(['success' => true, 'pembelian_id' => $pembelianId]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => 'Gagal memproses pembelian: ' . $e->getMessage()], 400);
+
+            return response()->json(['error' => 'Gagal memproses pembelian: '.$e->getMessage()], 400);
         }
     }
 }

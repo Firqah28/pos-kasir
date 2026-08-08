@@ -27,7 +27,7 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-4">
             <div class="bg-indigo-50 p-3 rounded-lg">
                 <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -64,6 +64,15 @@
                 <p id="statTotalPembelian" class="text-2xl font-bold text-gray-900">Rp 0</p>
             </div>
         </div>
+    </div>
+
+    <!-- Compact Fee Summary -->
+    <div class="mb-8 flex items-center justify-between rounded-xl bg-purple-50 border border-purple-200 px-5 py-3">
+        <div class="flex items-center gap-2 text-purple-700">
+            <svg class="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p class="text-sm font-semibold">Fee Toko ({{ $feePersen }}%)</p>
+        </div>
+        <p id="statTotalFee" class="text-base font-bold text-purple-700">Rp 0</p>
     </div>
 
     <!-- Chart Section -->
@@ -328,6 +337,10 @@
             <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Pengeluaran Supplier</p>
             <p id="printTotalPembelian" class="text-xl font-bold text-gray-900"></p>
         </div>
+        <div class="print-stat-card">
+            <p class="text-xs uppercase text-gray-500 font-semibold mb-1">Fee ({{ $feePersen }}%)</p>
+            <p id="printTotalFee" class="text-xl font-bold text-purple-600"></p>
+        </div>
     </div>
     
     <div class="mb-8">
@@ -505,6 +518,7 @@
     let lastSalesData = [];
     let lastHistoryPembelian = [];
     let lastHistoryPenjualan = [];
+    const feePersen = {{ $feePersen }};
 
     async function switchPeriod() {
         currentPeriod = document.getElementById('periodSelect').value;
@@ -595,11 +609,13 @@
         items.forEach(i => totalQty += Number(i.total_qty));
 
         let totalProfit = totalSales - totalHpp;
+        let totalFee = Math.round(totalSales * feePersen / 100);
 
         document.getElementById('statTotalSales').innerText = 'Rp ' + totalSales.toLocaleString('id-ID');
         document.getElementById('statTotalHpp').innerText = 'Rp ' + totalHpp.toLocaleString('id-ID');
         document.getElementById('statTotalProfit').innerText = 'Rp ' + totalProfit.toLocaleString('id-ID');
         document.getElementById('statTotalPembelian').innerText = 'Rp ' + totalPurchases.toLocaleString('id-ID');
+        document.getElementById('statTotalFee').innerText = 'Rp ' + totalFee.toLocaleString('id-ID');
     }
 
     function renderCombinedChart(data) {
@@ -825,6 +841,7 @@
         document.getElementById('printTotalHpp').innerText = document.getElementById('statTotalHpp').innerText;
         document.getElementById('printTotalProfit').innerText = document.getElementById('statTotalProfit').innerText;
         document.getElementById('printTotalPembelian').innerText = document.getElementById('statTotalPembelian').innerText;
+        document.getElementById('printTotalFee').innerText = document.getElementById('statTotalFee').innerText;
 
         const tbodyPenjualan = document.getElementById('printPenjualanTableBody');
         tbodyPenjualan.innerHTML = '';

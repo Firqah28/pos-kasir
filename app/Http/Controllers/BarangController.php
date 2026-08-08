@@ -14,25 +14,33 @@ class BarangController extends Controller
 
     public function apiIndex()
     {
+        $storeId = $this->currentStoreId();
+
         $barang = DB::table('barang')
             ->leftJoin('kategori', 'barang.kategori_id', '=', 'kategori.id')
             ->leftJoin('supplier', 'barang.supplier_id', '=', 'supplier.id')
             ->select('barang.*', 'kategori.nama_kategori', 'supplier.nama_supplier')
+            ->when($storeId, fn ($q) => $q->where('barang.store_id', $storeId))
+            ->orderBy('barang.nama_barang')
             ->get();
-            
+
         return response()->json($barang);
     }
 
     public function apiShow($id_or_barcode)
     {
+        $storeId = $this->currentStoreId();
+
         $barang = DB::table('barang')
             ->where('id', $id_or_barcode)
             ->orWhere('barcode', $id_or_barcode)
+            ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
             ->first();
-            
+
         if ($barang) {
             return response()->json($barang);
         }
+
         return response()->json(['message' => 'Not found'], 404);
     }
 
@@ -40,6 +48,7 @@ class BarangController extends Controller
     {
         try {
             $id = DB::table('barang')->insertGetId([
+                'store_id' => $this->currentStoreId(),
                 'barcode' => $request->barcode,
                 'nama_barang' => $request->nama_barang,
                 'kategori_id' => $request->kategori_id ?: null,
@@ -49,8 +58,9 @@ class BarangController extends Controller
                 'stok' => $request->stok,
                 'satuan' => $request->satuan,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
+
             return response()->json(['id' => $id]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -60,17 +70,27 @@ class BarangController extends Controller
     public function apiUpdate(Request $request, $id)
     {
         try {
-            DB::table('barang')->where('id', $id)->update([
-                'barcode' => $request->barcode,
-                'nama_barang' => $request->nama_barang,
-                'kategori_id' => $request->kategori_id ?: null,
-                'supplier_id' => $request->supplier_id ?: null,
-                'harga_beli' => $request->harga_beli,
-                'harga_jual' => $request->harga_jual,
-                'stok' => $request->stok,
-                'satuan' => $request->satuan,
-                'updated_at' => now()
-            ]);
+            $storeId = $this->currentStoreId();
+
+            $affected = DB::table('barang')
+                ->where('id', $id)
+                ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+                ->update([
+                    'barcode' => $request->barcode,
+                    'nama_barang' => $request->nama_barang,
+                    'kategori_id' => $request->kategori_id ?: null,
+                    'supplier_id' => $request->supplier_id ?: null,
+                    'harga_beli' => $request->harga_beli,
+                    'harga_jual' => $request->harga_jual,
+                    'stok' => $request->stok,
+                    'satuan' => $request->satuan,
+                    'updated_at' => now(),
+                ]);
+
+            if ($affected === 0) {
+                return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+            }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -80,7 +100,17 @@ class BarangController extends Controller
     public function apiDestroy($id)
     {
         try {
-            DB::table('barang')->where('id', $id)->delete();
+            $storeId = $this->currentStoreId();
+
+            $affected = DB::table('barang')
+                ->where('id', $id)
+                ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+                ->delete();
+
+            if ($affected === 0) {
+                return response()->json(['error' => 'Barang tidak ditemukan'], 404);
+            }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);

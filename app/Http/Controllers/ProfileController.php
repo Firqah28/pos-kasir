@@ -10,7 +10,8 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        $settings = DB::table('settings')->pluck('value', 'key');
+        $settings = $this->getSettings();
+
         return view('profil', compact('settings'));
     }
 
@@ -24,11 +25,13 @@ class ProfileController extends Controller
             'store_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $storeId = $this->currentStoreId();
+
         $fields = ['store_name', 'store_alamat', 'store_telepon', 'store_thank_you'];
         foreach ($fields as $field) {
             if ($request->has($field)) {
                 DB::table('settings')->updateOrInsert(
-                    ['key' => $field],
+                    ['key' => $field, 'store_id' => $storeId],
                     ['value' => $request->input($field), 'updated_at' => now()]
                 );
             }
@@ -36,15 +39,18 @@ class ProfileController extends Controller
 
         if ($request->hasFile('store_logo')) {
             $logoPath = $request->file('store_logo')->store('logos', 'public');
-            
-            // Delete old logo if exists
-            $oldLogo = DB::table('settings')->where('key', 'store_logo')->value('value');
+
+            // Delete old logo of this store if exists
+            $oldLogo = DB::table('settings')
+                ->where('key', 'store_logo')
+                ->where('store_id', $storeId)
+                ->value('value');
             if ($oldLogo) {
                 Storage::disk('public')->delete($oldLogo);
             }
 
             DB::table('settings')->updateOrInsert(
-                ['key' => 'store_logo'],
+                ['key' => 'store_logo', 'store_id' => $storeId],
                 ['value' => $logoPath, 'updated_at' => now()]
             );
         }
@@ -54,12 +60,34 @@ class ProfileController extends Controller
 
     public function removeLogo()
     {
-        $oldLogo = DB::table('settings')->where('key', 'store_logo')->value('value');
+        $storeId = $this->currentStoreId();
+
+        $oldLogo = DB::table('settings')
+            ->where('key', 'store_logo')
+            ->where('store_id', $storeId)
+            ->value('value');
         if ($oldLogo) {
             Storage::disk('public')->delete($oldLogo);
-            DB::table('settings')->where('key', 'store_logo')->delete();
+            DB::table('settings')
+                ->where('key', 'store_logo')
+                ->where('store_id', $storeId)
+                ->delete();
         }
 
         return redirect()->route('profil.index')->with('success', 'Logo berhasil dihapus!');
+    }
+
+    private function getSettings()
+    {
+        $global = DB::table('settings')->whereNull('store_id')->pluck('value', 'key');
+
+        $storeId = $this->currentStoreId();
+        if (! $storeId) {
+            return $global;
+        }
+
+        $storeSettings = DB::table('settings')->where('store_id', $storeId)->pluck('value', 'key');
+
+        return $global->merge($storeSettings);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -9,13 +10,51 @@ class LaporanController extends Controller
 {
     public function index()
     {
-        return view('laporan');
+        $feePersen = 0;
+        $storeId = $this->currentStoreId();
+
+        if ($storeId) {
+            $store = Store::find($storeId);
+            $feePersen = $store?->fee_persen ?? 0;
+        }
+
+        return view('laporan', compact('feePersen'));
     }
 
     private function getDateFilterSql($tableAlias, $startDate, $endDate)
     {
-        if (!$startDate || !$endDate) return ['', []];
-        return ["WHERE DATE({$tableAlias}.created_at) BETWEEN ? AND ?", [$startDate, $endDate]];
+        if (! $startDate || ! $endDate) {
+            return ['', []];
+        }
+
+        return ["DATE({$tableAlias}.created_at) BETWEEN ? AND ?", [$startDate, $endDate]];
+    }
+
+    private function getStoreFilterSql($tableAlias)
+    {
+        $storeId = $this->currentStoreId();
+        if (! $storeId) {
+            return ['', []];
+        }
+
+        return ["{$tableAlias}.store_id = ?", [$storeId]];
+    }
+
+    private function buildWhereSql(array $conditions)
+    {
+        $parts = [];
+        $params = [];
+
+        foreach ($conditions as [$clause, $bindings]) {
+            if ($clause) {
+                $parts[] = $clause;
+                foreach ($bindings as $binding) {
+                    $params[] = $binding;
+                }
+            }
+        }
+
+        return [empty($parts) ? '' : 'WHERE '.implode(' AND ', $parts), $params];
     }
 
     private function mergePeriods($penjualan, $hpp, $pembelian, $periodKey)
@@ -28,11 +67,17 @@ class LaporanController extends Controller
         rsort($allPeriods);
 
         $penMap = [];
-        foreach ($penjualan as $row) $penMap[$row->$periodKey] = $row;
+        foreach ($penjualan as $row) {
+            $penMap[$row->$periodKey] = $row;
+        }
         $hppMap = [];
-        foreach ($hpp as $row) $hppMap[$row->$periodKey] = $row;
+        foreach ($hpp as $row) {
+            $hppMap[$row->$periodKey] = $row;
+        }
         $belMap = [];
-        foreach ($pembelian as $row) $belMap[$row->$periodKey] = $row;
+        foreach ($pembelian as $row) {
+            $belMap[$row->$periodKey] = $row;
+        }
 
         $results = [];
         foreach ($allPeriods as $period) {
@@ -50,7 +95,39 @@ class LaporanController extends Controller
                 'total_pembelian' => (float) ($b->total_pembelian ?? 0),
             ];
         }
+
         return $results;
+    }
+
+    private function periodQuery($penDateClause, $hppDateClause, $belDateClause, $penExpr, $hppExpr, $belExpr, $groupCol)
+    {
+        [$whereT, $paramsT] = $this->buildWhereSql([
+            $penDateClause,
+            $this->getStoreFilterSql('t'),
+        ]);
+        [$whereDt, $paramsDt] = $this->buildWhereSql([
+            $hppDateClause,
+            $this->getStoreFilterSql('t2'),
+        ]);
+        [$whereP, $paramsP] = $this->buildWhereSql([
+            $belDateClause,
+            $this->getStoreFilterSql('p'),
+        ]);
+
+        $penjualan = DB::select(
+            "SELECT {$penExpr} as {$groupCol}, COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan FROM transaksi t {$whereT} GROUP BY {$groupCol}",
+            $paramsT
+        );
+        $hpp = DB::select(
+            "SELECT {$hppExpr} as {$groupCol}, SUM(dt.harga_modal * dt.qty) as total_hpp FROM detail_transaksi dt JOIN transaksi t2 ON dt.transaksi_id = t2.id {$whereDt} GROUP BY {$groupCol}",
+            $paramsDt
+        );
+        $pembelian = DB::select(
+            "SELECT {$belExpr} as {$groupCol}, SUM(p.total_harga) as total_pembelian FROM pembelian p {$whereP} GROUP BY {$groupCol}",
+            $paramsP
+        );
+
+        return [$penjualan, $hpp, $pembelian];
     }
 
     public function apiHarian(Request $request)
@@ -58,21 +135,12 @@ class LaporanController extends Controller
         $startDate = $request->query('startDate');
         $endDate = $request->query('endDate');
 
-        [$whereT, $paramsT] = $this->getDateFilterSql('t', $startDate, $endDate);
-        [$whereDt, $paramsDt] = $this->getDateFilterSql('t2', $startDate, $endDate);
-        [$whereP, $paramsP] = $this->getDateFilterSql('p', $startDate, $endDate);
-
-        $penjualan = DB::select(
-            "SELECT DATE(t.created_at) as tanggal, COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan FROM transaksi t {$whereT} GROUP BY tanggal",
-            $paramsT
-        );
-        $hpp = DB::select(
-            "SELECT DATE(t2.created_at) as tanggal, SUM(dt.harga_modal * dt.qty) as total_hpp FROM detail_transaksi dt JOIN transaksi t2 ON dt.transaksi_id = t2.id {$whereDt} GROUP BY tanggal",
-            $paramsDt
-        );
-        $pembelian = DB::select(
-            "SELECT DATE(p.created_at) as tanggal, SUM(p.total_harga) as total_pembelian FROM pembelian p {$whereP} GROUP BY tanggal",
-            $paramsP
+        [$penjualan, $hpp, $pembelian] = $this->periodQuery(
+            $this->getDateFilterSql('t', $startDate, $endDate),
+            $this->getDateFilterSql('t2', $startDate, $endDate),
+            $this->getDateFilterSql('p', $startDate, $endDate),
+            'DATE(t.created_at)', 'DATE(t2.created_at)', 'DATE(p.created_at)',
+            'tanggal'
         );
 
         return response()->json($this->mergePeriods($penjualan, $hpp, $pembelian, 'tanggal'));
@@ -83,21 +151,12 @@ class LaporanController extends Controller
         $startDate = $request->query('startDate');
         $endDate = $request->query('endDate');
 
-        [$whereT, $paramsT] = $this->getDateFilterSql('t', $startDate, $endDate);
-        [$whereDt, $paramsDt] = $this->getDateFilterSql('t2', $startDate, $endDate);
-        [$whereP, $paramsP] = $this->getDateFilterSql('p', $startDate, $endDate);
-
-        $penjualan = DB::select(
-            "SELECT DATE_FORMAT(t.created_at, '%Y-%m') as bulan, COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan FROM transaksi t {$whereT} GROUP BY bulan",
-            $paramsT
-        );
-        $hpp = DB::select(
-            "SELECT DATE_FORMAT(t2.created_at, '%Y-%m') as bulan, SUM(dt.harga_modal * dt.qty) as total_hpp FROM detail_transaksi dt JOIN transaksi t2 ON dt.transaksi_id = t2.id {$whereDt} GROUP BY bulan",
-            $paramsDt
-        );
-        $pembelian = DB::select(
-            "SELECT DATE_FORMAT(p.created_at, '%Y-%m') as bulan, SUM(p.total_harga) as total_pembelian FROM pembelian p {$whereP} GROUP BY bulan",
-            $paramsP
+        [$penjualan, $hpp, $pembelian] = $this->periodQuery(
+            $this->getDateFilterSql('t', $startDate, $endDate),
+            $this->getDateFilterSql('t2', $startDate, $endDate),
+            $this->getDateFilterSql('p', $startDate, $endDate),
+            "DATE_FORMAT(t.created_at, '%Y-%m')", "DATE_FORMAT(t2.created_at, '%Y-%m')", "DATE_FORMAT(p.created_at, '%Y-%m')",
+            'bulan'
         );
 
         return response()->json($this->mergePeriods($penjualan, $hpp, $pembelian, 'bulan'));
@@ -108,21 +167,12 @@ class LaporanController extends Controller
         $startDate = $request->query('startDate');
         $endDate = $request->query('endDate');
 
-        [$whereT, $paramsT] = $this->getDateFilterSql('t', $startDate, $endDate);
-        [$whereDt, $paramsDt] = $this->getDateFilterSql('t2', $startDate, $endDate);
-        [$whereP, $paramsP] = $this->getDateFilterSql('p', $startDate, $endDate);
-
-        $penjualan = DB::select(
-            "SELECT DATE_FORMAT(t.created_at, '%Y') as tahun, COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan FROM transaksi t {$whereT} GROUP BY tahun",
-            $paramsT
-        );
-        $hpp = DB::select(
-            "SELECT DATE_FORMAT(t2.created_at, '%Y') as tahun, SUM(dt.harga_modal * dt.qty) as total_hpp FROM detail_transaksi dt JOIN transaksi t2 ON dt.transaksi_id = t2.id {$whereDt} GROUP BY tahun",
-            $paramsDt
-        );
-        $pembelian = DB::select(
-            "SELECT DATE_FORMAT(p.created_at, '%Y') as tahun, SUM(p.total_harga) as total_pembelian FROM pembelian p {$whereP} GROUP BY tahun",
-            $paramsP
+        [$penjualan, $hpp, $pembelian] = $this->periodQuery(
+            $this->getDateFilterSql('t', $startDate, $endDate),
+            $this->getDateFilterSql('t2', $startDate, $endDate),
+            $this->getDateFilterSql('p', $startDate, $endDate),
+            "DATE_FORMAT(t.created_at, '%Y')", "DATE_FORMAT(t2.created_at, '%Y')", "DATE_FORMAT(p.created_at, '%Y')",
+            'tahun'
         );
 
         return response()->json($this->mergePeriods($penjualan, $hpp, $pembelian, 'tahun'));
@@ -132,30 +182,12 @@ class LaporanController extends Controller
     {
         $date = $request->query('date');
 
-        $penjualan = DB::select(
-            "SELECT DATE_FORMAT(t.created_at, '%Y-%m-%d %H:00:00') as jam,
-                    COUNT(t.id) as total_transaksi, SUM(t.total_harga) as total_penjualan
-             FROM transaksi t
-             WHERE DATE(t.created_at) = ?
-             GROUP BY jam",
-            [$date]
-        );
-        $hpp = DB::select(
-            "SELECT DATE_FORMAT(t2.created_at, '%Y-%m-%d %H:00:00') as jam,
-                    SUM(dt.harga_modal * dt.qty) as total_hpp
-             FROM detail_transaksi dt
-             JOIN transaksi t2 ON dt.transaksi_id = t2.id
-             WHERE DATE(t2.created_at) = ?
-             GROUP BY jam",
-            [$date]
-        );
-        $pembelian = DB::select(
-            "SELECT DATE_FORMAT(p.created_at, '%Y-%m-%d %H:00:00') as jam,
-                    SUM(p.total_harga) as total_pembelian
-             FROM pembelian p
-             WHERE DATE(p.created_at) = ?
-             GROUP BY jam",
-            [$date]
+        [$penjualan, $hpp, $pembelian] = $this->periodQuery(
+            ['DATE(t.created_at) = ?', [$date]],
+            ['DATE(t2.created_at) = ?', [$date]],
+            ['DATE(p.created_at) = ?', [$date]],
+            "DATE_FORMAT(t.created_at, '%Y-%m-%d %H:00:00')", "DATE_FORMAT(t2.created_at, '%Y-%m-%d %H:00:00')", "DATE_FORMAT(p.created_at, '%Y-%m-%d %H:00:00')",
+            'jam'
         );
 
         return response()->json($this->mergePeriods($penjualan, $hpp, $pembelian, 'jam'));
@@ -168,30 +200,38 @@ class LaporanController extends Controller
 
         $query = DB::table('transaksi as t')
             ->leftJoin('users as u', 't.user_id', '=', 'u.id')
-            ->select('t.id', 't.total_harga', 't.bayar', 't.kembalian', 't.created_at', 'u.username as kasir_name');
-            
+            ->select('t.id', 't.total_harga', 't.bayar', 't.kembalian', 't.created_at', 'u.username as kasir_name')
+            ->when($this->currentStoreId(), fn ($q, $storeId) => $q->where('t.store_id', $storeId));
+
         if ($startDate && $endDate) {
             $query->whereRaw('DATE(t.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->orderByDesc('t.created_at')->get();
+
         return response()->json($results);
     }
 
     public function apiHistoryPenjualanDetail($id)
     {
+        $storeId = $this->currentStoreId();
+
         $header = DB::table('transaksi as t')
             ->leftJoin('users as u', 't.user_id', '=', 'u.id')
             ->select('t.id', 't.total_harga', 't.bayar', 't.kembalian', 't.created_at', 'u.username as kasir_name')
             ->where('t.id', $id)
+            ->when($storeId, fn ($q, $sid) => $q->where('t.store_id', $sid))
             ->first();
 
-        if (!$header) return response()->json(['error' => 'Not found'], 404);
+        if (! $header) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
 
         $items = DB::table('detail_transaksi as dt')
             ->leftJoin('barang as b', 'dt.barang_id', '=', 'b.id')
             ->select('dt.qty', 'dt.harga_jual as harga', 'dt.harga_modal', 'dt.subtotal', 'b.nama_barang')
             ->where('dt.transaksi_id', $id)
+            ->when($storeId, fn ($q, $sid) => $q->where('dt.store_id', $sid))
             ->get();
 
         return response()->json(['transaksi' => $header, 'items' => $items]);
@@ -205,31 +245,39 @@ class LaporanController extends Controller
         $query = DB::table('pembelian as p')
             ->leftJoin('users as u', 'p.user_id', '=', 'u.id')
             ->leftJoin('supplier as s', 'p.supplier_id', '=', 's.id')
-            ->select('p.id', 'p.total_harga', 'p.created_at', 'u.username as admin_name', 's.nama_supplier');
+            ->select('p.id', 'p.total_harga', 'p.created_at', 'u.username as admin_name', 's.nama_supplier')
+            ->when($this->currentStoreId(), fn ($q, $storeId) => $q->where('p.store_id', $storeId));
 
         if ($startDate && $endDate) {
             $query->whereRaw('DATE(p.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->orderByDesc('p.created_at')->get();
+
         return response()->json($results);
     }
 
     public function apiHistoryPembelianDetail($id)
     {
+        $storeId = $this->currentStoreId();
+
         $header = DB::table('pembelian as p')
             ->leftJoin('users as u', 'p.user_id', '=', 'u.id')
             ->leftJoin('supplier as s', 'p.supplier_id', '=', 's.id')
             ->select('p.id', 'p.total_harga', 'p.created_at', 'u.username as admin_name', 's.nama_supplier')
             ->where('p.id', $id)
+            ->when($storeId, fn ($q, $sid) => $q->where('p.store_id', $sid))
             ->first();
 
-        if (!$header) return response()->json(['error' => 'Not found'], 404);
+        if (! $header) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
 
         $items = DB::table('detail_pembelian as dp')
             ->leftJoin('barang as b', 'dp.barang_id', '=', 'b.id')
             ->select('dp.qty', 'dp.harga_beli', 'dp.subtotal', 'b.nama_barang')
             ->where('dp.pembelian_id', $id)
+            ->when($storeId, fn ($q, $sid) => $q->where('dp.store_id', $sid))
             ->get();
 
         return response()->json(['transaksi' => $header, 'items' => $items]);
@@ -243,15 +291,16 @@ class LaporanController extends Controller
         $query = DB::table('detail_transaksi as dt')
             ->join('barang as b', 'dt.barang_id', '=', 'b.id')
             ->join('transaksi as t', 'dt.transaksi_id', '=', 't.id')
-            ->select('b.nama_barang', DB::raw('SUM(dt.qty) as total_qty'), DB::raw('SUM(dt.subtotal) as total_pendapatan'));
+            ->select('b.nama_barang', DB::raw('SUM(dt.qty) as total_qty'), DB::raw('SUM(dt.subtotal) as total_pendapatan'))
+            ->when($this->currentStoreId(), fn ($q, $storeId) => $q->where('t.store_id', $storeId));
 
         if ($startDate && $endDate) {
             $query->whereRaw('DATE(t.created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
         }
 
         $results = $query->groupBy('dt.barang_id', 'b.nama_barang')
-                         ->orderByDesc('total_qty')
-                         ->get();
+            ->orderByDesc('total_qty')
+            ->get();
 
         return response()->json($results);
     }

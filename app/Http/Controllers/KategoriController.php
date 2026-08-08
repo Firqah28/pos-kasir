@@ -14,7 +14,13 @@ class KategoriController extends Controller
 
     public function apiIndex()
     {
-        $kategori = DB::table('kategori')->get();
+        $storeId = $this->currentStoreId();
+
+        $kategori = DB::table('kategori')
+            ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+            ->orderBy('nama_kategori')
+            ->get();
+
         return response()->json($kategori);
     }
 
@@ -22,10 +28,12 @@ class KategoriController extends Controller
     {
         try {
             $id = DB::table('kategori')->insertGetId([
+                'store_id' => $this->currentStoreId(),
                 'nama_kategori' => $request->nama_kategori,
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
+
             return response()->json(['id' => $id]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -35,10 +43,20 @@ class KategoriController extends Controller
     public function apiUpdate(Request $request, $id)
     {
         try {
-            DB::table('kategori')->where('id', $id)->update([
-                'nama_kategori' => $request->nama_kategori,
-                'updated_at' => now()
-            ]);
+            $storeId = $this->currentStoreId();
+
+            $affected = DB::table('kategori')
+                ->where('id', $id)
+                ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+                ->update([
+                    'nama_kategori' => $request->nama_kategori,
+                    'updated_at' => now(),
+                ]);
+
+            if ($affected === 0) {
+                return response()->json(['error' => 'Kategori tidak ditemukan'], 404);
+            }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
@@ -48,7 +66,17 @@ class KategoriController extends Controller
     public function apiDestroy($id)
     {
         try {
-            DB::table('kategori')->where('id', $id)->delete();
+            $storeId = $this->currentStoreId();
+
+            $affected = DB::table('kategori')
+                ->where('id', $id)
+                ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
+                ->delete();
+
+            if ($affected === 0) {
+                return response()->json(['error' => 'Kategori tidak ditemukan'], 404);
+            }
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);

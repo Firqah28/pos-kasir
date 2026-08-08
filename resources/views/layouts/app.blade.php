@@ -186,13 +186,38 @@
             
             <!-- Sidebar Navigation -->
             <div class="flex flex-1 flex-col overflow-y-auto py-4">
+                @php
+                    $isMaster = auth()->check() && auth()->user()->isMasterAdmin();
+                    $previewStoreId = $isMaster ? session('preview_store_id') : null;
+                    $isPreviewing = $isMaster && $previewStoreId;
+                    $showPusatMenu = $isMaster && ! $isPreviewing;
+                    $showAdminMenu = auth()->check() && (auth()->user()->role === 'admin' || $isPreviewing);
+                @endphp
                 <nav class="flex-1 px-3 space-y-1">
+                    @if($showPusatMenu)
+                    <a href="{{ route('dashboard.pusat') }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('dashboard.pusat') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
+                        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('dashboard.pusat') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
+                        <span class="sidebar-text font-semibold">Dashboard Pusat</span>
+                    </a>
+                    <a href="{{ route('pusat.toko') }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('pusat.toko') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
+                        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('pusat.toko') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" /></svg>
+                        <span class="sidebar-text font-semibold">Data Toko</span>
+                    </a>
+                    <a href="{{ route('pusat.fee') }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('pusat.fee') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
+                        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('pusat.fee') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span class="sidebar-text font-semibold">Tagihan Fee</span>
+                    </a>
+                    <a href="{{ route('pusat.users') }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('pusat.users') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
+                        <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('pusat.users') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>
+                        <span class="sidebar-text font-semibold">Kelola Pengguna</span>
+                    </a>
+                    @else
                     <a href="{{ route('dashboard') ?? '#' }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
                         <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
                         <span class="sidebar-text font-semibold">Dashboard</span>
                     </a>
 
-                    @if(auth()->check() && auth()->user()->role === 'admin')
+                    @if($showAdminMenu)
                     <a href="{{ route('pembelian.index') ?? '#' }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('pembelian.index') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
                         <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('pembelian.index') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <span class="sidebar-text font-semibold">Pembelian</span>
@@ -204,7 +229,7 @@
                         <span class="sidebar-text font-semibold">Kasir</span>
                     </a>
 
-                    @if(auth()->check() && auth()->user()->role === 'admin')
+                    @if($showAdminMenu)
                     <a href="{{ route('barang.index') ?? '#' }}" class="sidebar-nav-item group flex items-center rounded-xl px-3 py-3 text-sm font-medium {{ request()->routeIs('barang.index') ? 'bg-white/20 text-white shadow-lg' : 'text-blue-100 hover:bg-white/10 hover:text-white' }} transition-all">
                         <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('barang.index') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
                         <span class="sidebar-text font-semibold">Barang</span>
@@ -221,6 +246,7 @@
                         <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('laporan.index') ? 'text-white' : 'text-blue-300 group-hover:text-white' }} md:mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>
                         <span class="sidebar-text font-semibold">Laporan</span>
                     </a>
+                    @endif
                     @endif
                 </nav>
             </div>
@@ -260,7 +286,7 @@
                 <div class="hidden md:block flex-1"></div>
 
                 <!-- Right side (Profile logo) -->
-                @if(auth()->check() && auth()->user()->role === 'admin')
+                @if($showAdminMenu)
                 <div class="flex items-center gap-x-4 lg:gap-x-6">
                     <a href="{{ route('profil.index') }}" class="flex items-center gap-x-2 rounded-full p-1 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200" title="Edit Profil Toko">
                         @if(isset($globalSettings['store_logo']))
@@ -271,12 +297,27 @@
                             </div>
                         @endif
                         <span class="hidden md:flex md:items-center pr-2">
-                            <span class="text-sm font-semibold leading-6 text-gray-700" aria-hidden="true">{{ auth()->user()->name }}</span>
+                            <span class="text-sm font-semibold leading-6 text-gray-700" aria-hidden="true">{{ auth()->user()->username }}</span>
                         </span>
                     </a>
                 </div>
                 @endif
             </div>
+
+            <!-- Preview Mode Banner (Master Admin melihat detail cabang) -->
+            @if($isPreviewing)
+                @php $previewStore = \App\Models\Store::find($previewStoreId); @endphp
+                <div class="shrink-0 flex items-center justify-between gap-4 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2.5 sm:px-6 text-white text-sm">
+                    <span class="flex items-center gap-2">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72l1.189-1.19A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" /></svg>
+                        <span>Sedang melihat cabang <strong class="font-bold">{{ $previewStore->nama_toko ?? 'Cabang' }}</strong></span>
+                    </span>
+                    <a href="{{ route('pusat.cabang.keluar') }}" class="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-white/15 hover:bg-white/25 px-3 py-1.5 text-xs font-semibold transition-colors">
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
+                        Kembali ke Pusat
+                    </a>
+                </div>
+            @endif
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto w-full p-6">
